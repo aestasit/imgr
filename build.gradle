@@ -1,0 +1,15 @@
+apply plugin: 'groovy'
+
+group = 'com.aestasit.infrastructure'
+version = '0.1-SNAPSHOT'
+
+ repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+  }
+
+dependencies {
+  compile localGroovy()
+  compile 'com.aestasit.cloud.aws:gramazon:0.1-SNAPSHOT'
+  testCompile 'junit:junit:4.+'
+}
