@@ -1,7 +1,9 @@
 package com.aestasit.infrastructure
+
 import groovy.json.JsonSlurper
 import com.aestasit.cloud.aws.*
 import com.aestasit.infrastructure.builder.*
+
 class Packer {
 
   void startInstance(String zone, String ami) {

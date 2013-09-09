@@ -1,3 +1,5 @@
+package com.aestasit.infrastructure.builder
+
 class AmiBuilder {
 
   String accessKey
