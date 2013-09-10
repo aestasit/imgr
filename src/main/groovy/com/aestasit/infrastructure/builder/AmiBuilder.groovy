@@ -1,5 +1,8 @@
 package com.aestasit.infrastructure.builder
 
+import com.aestasit.cloud.aws.*
+import com.aestasit.infrastructure.model.Box
+
 class AmiBuilder {
 
   String accessKey
@@ -9,18 +12,39 @@ class AmiBuilder {
   String sourceAmi
   String sshUsername
   String amiRegion
-  
-  def config(jsonConfig) {
 
-    jsonConfig.with {
-      accessKey = access_key
-      secretKey = secret_key
-      amiName = ami_name
-      instanceType = instance_type
-      sshUsername = ssh_username
-      sourceAmi = source_ami
-      amiRegion = region
-    }
+  AmiBuilder(jsonConfig) {
+ 
+    accessKey = jsonConfig.access_key
+    secretKey = jsonConfig.secret_key
+    amiName = jsonConfig.ami_name
+    instanceType = jsonConfig.instance_type
+    sshUsername = jsonConfig.ssh_username
+    sourceAmi = jsonConfig.source_ami
+    amiRegion = jsonConfig.region
+
+  }
+
+  def getTempKeyName() {
+    // TODO
+    'aestas-ci'
+  }
+
+  Box startInstance() {
+
+    // TODO allows reading from system properties
+    System.setProperty("aws.accessKeyId", accessKey)
+    System.setProperty("aws.secretKey", secretKey)
+
+    def ec2 = new EC2Client(amiRegion)
+
+    def instance = ec2.startInstance(getTempKeyName(),
+                      sourceAmi,
+                      'aestas-default', //TODO should use temporary security by default
+                      instanceType,
+                      true, -1, amiName)
+
+    new Box(host:instance.host, port:22)
   }
 
 

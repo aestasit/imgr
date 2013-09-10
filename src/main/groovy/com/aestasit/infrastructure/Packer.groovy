@@ -1,13 +1,14 @@
 package com.aestasit.infrastructure
 
 import groovy.json.JsonSlurper
-import com.aestasit.cloud.aws.*
 import com.aestasit.infrastructure.builder.*
+import com.aestasit.infrastructure.provisioner.*
+import com.aestasit.infrastructure.model.Box
 
 class Packer {
 
   void startInstance(String zone, String ami) {
-    def ec2 = new EC2Client(zone)
+    //def ec2 = new EC2Client(zone)
 
   }
 
@@ -26,9 +27,9 @@ class Packer {
     def config = new JsonSlurper().parse(reader)
 
     validate(config)
-    def builder = getBuilder(config.type)
-    builder.config(config)
-
+    def builder = getBuilder(config)
+    def shinyBox = builder.startInstance()
+    def provisioner = getProvisioner(config, shinyBox)
 
   }
 
@@ -37,12 +38,19 @@ class Packer {
     // TODO
   }
 
-  def getBuilder(String builderType) {
+  def getProvisioner(builderConfig, Box aBox) {
+
+    def provisioner
+    provisioner = new PuppetProvisioner()
+
+  }
+
+  def getBuilder(builderConfig) {
     def builder
-    switch ( builderType ) {
+    switch ( builderConfig.type ) {
 
       case 'amazon-ebs':
-        builder = new AmiBuilder()
+        builder = new AmiBuilder(builderConfig)
         break
       default:
         builder = new UnsupportedBuilder()

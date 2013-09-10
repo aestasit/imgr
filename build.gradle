@@ -3,13 +3,20 @@ apply plugin: 'groovy'
 group = 'com.aestasit.infrastructure'
 version = '0.1-SNAPSHOT'
 
- repositories {
-    mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-  }
+repositories {
+  mavenCentral()
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
 
 dependencies {
   compile localGroovy()
   compile 'com.aestasit.cloud.aws:gramazon:0.1-SNAPSHOT'
+  compile 'com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT'
+  compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.5'
+
+  logbackVersion = '1.0.13'
+  testRuntime group: 'ch.qos.logback', name:'logback-classic', version: logbackVersion
+  testRuntime group: 'ch.qos.logback', name:'logback-core', version: logbackVersion
+  
   testCompile 'junit:junit:4.+'
 }

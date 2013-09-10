@@ -1,3 +1,4 @@
 package com.aestasit.infrastructure.provisioner
-
-class Provisioner {}
+enum PackageProvider {
+  YUM, APT, GEM;
+}
