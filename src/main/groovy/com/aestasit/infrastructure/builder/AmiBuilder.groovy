@@ -12,22 +12,21 @@ class AmiBuilder {
   String sourceAmi
   String sshUsername
   String amiRegion
+  String keyPairName
+  String keyPairPath // This should go
 
-  AmiBuilder(jsonConfig) {
- 
-    accessKey = jsonConfig.access_key
-    secretKey = jsonConfig.secret_key
-    amiName = jsonConfig.ami_name
-    instanceType = jsonConfig.instance_type
-    sshUsername = jsonConfig.ssh_username
-    sourceAmi = jsonConfig.source_ami
-    amiRegion = jsonConfig.region
+  AmiBuilder(conf) {
 
-  }
+    accessKey = conf.access_key
+    secretKey = conf.secret_key
+    amiName = conf.ami_name
+    instanceType = conf.instance_type
+    sshUsername = conf.ssh_username
+    sourceAmi = conf.source_ami
+    amiRegion = conf.region
+    keyPairName = conf.keypair
 
-  def getTempKeyName() {
-    // TODO
-    'aestas-ci'
+    keyPairPath = conf.keypair_location// This should go
   }
 
   Box startInstance() {
@@ -38,13 +37,16 @@ class AmiBuilder {
 
     def ec2 = new EC2Client(amiRegion)
 
-    def instance = ec2.startInstance(getTempKeyName(),
+    def instance = ec2.startInstance(keyPairName,
                       sourceAmi,
                       'aestas-default', //TODO should use temporary security by default
                       instanceType,
                       true, -1, amiName)
 
-    new Box(host:instance.host, port:22)
+    new Box(host:instance.host,
+            port:22,
+            keyPath:keyPairPath,
+            user:sshUsername)
   }
 
 

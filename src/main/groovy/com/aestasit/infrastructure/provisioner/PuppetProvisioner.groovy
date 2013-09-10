@@ -8,23 +8,24 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class PuppetProvisioner extends BaseProvisioner {
 
+  def provisionerConf
 
-
-  def PuppetProvisioner(Box aBox) {
-
+  def PuppetProvisioner(Box aBox, config) {
+    // Create a running SSH session
     session = new SshSession(aBox.host, aBox.user, aBox.keyPath)
-
+    provisionerConf = config
   }
 
 
   void provision() {
 
-    updateRepos() // w
-    install() // w
+    //updateRepos() // w
+    //install() // w
 
-    //applyManifest()
+    applyManifest(provisionerConf)
 
   }
+
 
   private updateRepos() {
     if (isYumAvailable()) {
@@ -42,10 +43,11 @@ class PuppetProvisioner extends BaseProvisioner {
     } else {
       throw new PackerException('This operating system does not support Yum!')
     }
-
-
   }
 
+ /**
+  * Install
+  */
   private void install() {
 
     if (isAmazonLinux()) {
@@ -75,29 +77,39 @@ class PuppetProvisioner extends BaseProvisioner {
     }
     // Create empty hiera.yaml file to avoid warning upon puppet apply.
     session.exec("touch /etc/puppet/hiera.yaml")
-    // Set template directory to known location.
-    session.exec(command: 'augtool -b -s set /files/etc/puppet/puppet.conf/main/templatedir /etc/puppet/templates', failOnError: false)
 
   }
 
+ 
+  private void applyManifest(provisionerConf) {
 
+    def manifestFile = new File(provisionerConf.manifest_file).name
+    log.debug "manifest file is $manifestFile"
+    // TODO supporting only one manifest now...
+    log.info '> Uploading new Puppet manifest'
+    session.scp (provisionerConf.manifest_file,
+                 provisionerConf.staging_directory)
 
-  private void applyManifest() {
-
+    // Apply default manifest.
+    log.info'> Applying Puppet configuration'
+    session.exec "sudo /usr/bin/puppet apply -v ${provisionerConf.staging_directory}/${manifestFile}"
 
   }
 
 
   private puppetRepo() {
-    session.uploadFileAsRoot('/etc/yum.repos.d/puppet.repo', readResourceFile('/repos/puppet.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo', 
+      readResourceFile('/repos/puppet.repo'))
   }
 
   private epelRepo() {
-    session.uploadFileAsRoot('/etc/yum.repos.d/epel.repo',readResourceFile('/repos/epel.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/epel.repo',
+      readResourceFile('/repos/epel.repo'))
   }
 
   private centosRepo() {
-    session.uploadFileAsRoot('/etc/yum.repos.d/centos.repo', readResourceFile('/repos/centos.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/centos.repo', 
+      readResourceFile('/repos/centos.repo'))
   }
 
 }

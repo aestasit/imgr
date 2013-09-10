@@ -5,6 +5,7 @@ import com.aestasit.ssh.SshOptions
 import com.aestasit.ssh.dsl.*
 import com.aestasit.ssh.log.SysOutLogger
 import groovy.util.logging.Slf4j
+import com.aestasit.infrastructure.*
 
 @Slf4j
 class SshSession {
@@ -28,16 +29,44 @@ class SshSession {
     }
     engine = new SshDslEngine(options)
 
-
   }
 
-  //def exec(String command) {
-  //  def res
-  //  engine.remoteSession {
-  //    res = exec command
-  //  }
-  //  res
-  //}
+ /**
+  * upload a file or folder to a remote folder
+  */
+  def scp( _from, _to) {
+    def res
+    def fileFrom = new File(_from)
+    boolean isDir = false
+    if (fileFrom.exists()) {
+      isDir = fileFrom.isDirectory()
+    } else {
+      throw new PackerException("File does not exist: ${_from}")
+    }
+    engine.remoteSession {
+      scp {
+        if (isDir) {
+          from { localDir _from }
+        } else {
+          from { localFile _from }
+        }
+        into { remoteDir _to}
+      }
+    }
+    res
+  }
+
+  def _scp(Closure cl) {
+
+    def res
+    engine.remoteSession {
+      scp {
+        cl()
+      }
+    }
+    res
+  }
+
 
   def exec(Map commandMap) {
     def res
@@ -62,7 +91,7 @@ class SshSession {
 
   }
 
-  def uploadFileAsRoot(String remoteFileLocation, String fileContent) {
+  def uploadTxtAsRoot(String remoteFileLocation, String fileContent) {
     def res
     engine.remoteSession {
       prefix("sudo") {

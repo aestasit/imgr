@@ -19,3 +19,5 @@ gradle.properties
 
 .DS_Store
 /bin
+
+notes.md

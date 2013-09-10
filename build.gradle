@@ -3,6 +3,10 @@ apply plugin: 'groovy'
 group = 'com.aestasit.infrastructure'
 version = '0.1-SNAPSHOT'
 
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
+
 repositories {
   mavenCentral()
   maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
@@ -19,4 +23,14 @@ dependencies {
   testRuntime group: 'ch.qos.logback', name:'logback-core', version: logbackVersion
   
   testCompile 'junit:junit:4.+'
+}
+
+
+test.doFirst {
+  systemProperties = System.getProperties()
+  project.properties.each { key, value ->
+    if (key.startsWith("aws")) {
+      systemProperties[key] = value
+    }
+  }
 }
