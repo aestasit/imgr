@@ -36,7 +36,7 @@ class PackerTest extends BaseTest {
   public void shutDown() {
 
     ec2.listInstances("packer*").each {
-      ec2.terminateInstances([it.instanceId])
+      //ec2.terminateInstances([it.instanceId])
     }
   }
 

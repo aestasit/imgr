@@ -2,7 +2,9 @@ package com.aestasit.infrastructure.builder
 
 import com.aestasit.cloud.aws.*
 import com.aestasit.infrastructure.model.Box
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class AmiBuilder {
 
   String accessKey
@@ -15,6 +17,8 @@ class AmiBuilder {
   String keyPairName
   String keyPairPath // This should go
 
+  def ec2
+
   AmiBuilder(conf) {
 
     accessKey = conf.access_key
@@ -24,18 +28,19 @@ class AmiBuilder {
     sshUsername = conf.ssh_username
     sourceAmi = conf.source_ami
     amiRegion = conf.region
-    keyPairName = conf.keypair
+    keyPairName = conf.keypair // TODO This should go
 
-    keyPairPath = conf.keypair_location// This should go
-  }
+    keyPairPath = conf.keypair_location // TODO This should go
 
-  Box startInstance() {
-
-    // TODO allows reading from system properties
+    // TODO allows reading from system properties and configuration
     System.setProperty("aws.accessKeyId", accessKey)
     System.setProperty("aws.secretKey", secretKey)
 
-    def ec2 = new EC2Client(amiRegion)
+    ec2 = new EC2Client(amiRegion)
+
+  }
+
+  Box startInstance() {
 
     def instance = ec2.startInstance(keyPairName,
                       sourceAmi,
@@ -43,12 +48,17 @@ class AmiBuilder {
                       instanceType,
                       true, -1, amiName)
 
-    new Box(host:instance.host,
-            port:22,
-            keyPath:keyPairPath,
-            user:sshUsername)
+    new Ec2Box(host:instance.host,
+               port:22,
+               keyPath:keyPairPath,
+               user:sshUsername,
+               instanceId:instance.instanceId)
   }
 
+  
+  void createImage(Ec2Box box, name, description) {
+
+    ec2.createImage(box.instanceId, name, description,true,120,5)
+  }
 
 }
-

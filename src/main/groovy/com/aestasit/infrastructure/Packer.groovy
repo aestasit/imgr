@@ -4,7 +4,9 @@ import groovy.json.JsonSlurper
 import com.aestasit.infrastructure.builder.*
 import com.aestasit.infrastructure.provisioner.*
 import com.aestasit.infrastructure.model.Box
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class Packer {
 
   void processConfiguration(InputStream f) {
@@ -15,13 +17,15 @@ class Packer {
 
     def builder = getBuilder(config)
     def shinyBox = builder.startInstance()
+    log.info("> machine is started with id ${shinyBox.id}")
 
     if (hasProvisioners (config)) {
       def provisioner = getProvisioner(config, shinyBox)
       provisioner.provision()
     }
-    // shinyBox.shutDown() // TODO
-    // shinyBox.createImage('name') // TODO
+    log.info("> provisioning completed, creating image now...")
+    builder.createImage(shinyBox, 'name', 'description')
+
   }
 
   private boolean hasProvisioners(config) {
@@ -63,6 +67,10 @@ class Packer {
       default:
         builder = new UnsupportedBuilder()
     }
+  }
+
+  static main(args) {
+
   }
 
 }

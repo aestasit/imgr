@@ -1,11 +1,12 @@
 apply plugin: 'groovy'
+apply plugin: 'application'
 
 group = 'com.aestasit.infrastructure'
 version = '0.1-SNAPSHOT'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
-
+mainClassName = "com.aestasit.infrastructure.Packer"
 
 repositories {
   mavenCentral()
@@ -14,14 +15,13 @@ repositories {
 
 dependencies {
   compile localGroovy()
-  compile 'com.aestasit.cloud.aws:gramazon:0.1-SNAPSHOT'
+  compile 'com.aestasit.cloud.aws:gramazon:0.2-SNAPSHOT'
   compile 'com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT'
-  compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.5'
+  compile 'org.slf4j:slf4j-api:1.7.5'
 
-  logbackVersion = '1.0.13'
-  testRuntime group: 'ch.qos.logback', name:'logback-classic', version: logbackVersion
-  testRuntime group: 'ch.qos.logback', name:'logback-core', version: logbackVersion
-  
+  testRuntime 'ch.qos.logback:logback-classic:1.0.13'
+  testRuntime 'ch.qos.logback:logback-core:1.0.13'
+
   testCompile 'junit:junit:4.+'
 }
 
@@ -33,4 +33,8 @@ test.doFirst {
       systemProperties[key] = value
     }
   }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.6'
 }
