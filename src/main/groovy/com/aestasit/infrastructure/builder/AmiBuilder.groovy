@@ -28,11 +28,23 @@ class AmiBuilder {
     sshUsername = conf.ssh_username
     sourceAmi = conf.source_ami
     amiRegion = conf.region
-    keyPairName = conf.keypair // TODO This should go
 
+    keyPairName = conf.keypair // TODO This should go
     keyPairPath = conf.keypair_location // TODO This should go
 
-    // TODO allows reading from system properties and configuration
+    if (!accessKey) {
+      accessKey = System.getenv('AWS_ACCESS_KEY_ID')
+    }
+    if (!secretKey) {
+      secretKey = System.getenv('AWS_SECRET_ACCESS_KEY')
+    }
+
+    if (!accessKey || !secretKey) {
+
+      log.error 'accessKey or secretKey are null'
+      System.exit(0)
+    }
+
     System.setProperty("aws.accessKeyId", accessKey)
     System.setProperty("aws.secretKey", secretKey)
 
@@ -57,8 +69,8 @@ class AmiBuilder {
 
 
   void createImage(Ec2Box box, name, description) {
-
-    ec2.createImage(box.instanceId, name, description, true, 120, 5)
+    // TODO better error handling
+    ec2.createImage(box.instanceId, name, description, true, 120, 20)
   }
 
 }

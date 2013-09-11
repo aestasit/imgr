@@ -24,8 +24,8 @@ class Packer {
     if (hasProvisioners(config)) {
       def provisioner = getProvisioner(config, shinyBox)
       provisioner.provision()
+      log.info("> provisioning completed, creating image now...")
     }
-    log.info("> provisioning completed, creating image now...")
     builder.createImage(shinyBox, 'name', 'description')
 
   }
@@ -35,6 +35,7 @@ class Packer {
   }
 
   void validate(conf) {
+    // TODO implement validation
     println '> validation not implemented'
     println "Number of builders: ${conf.builders.size}"
     println "Number of provisioners: ${conf.provisioners?.size}"
@@ -72,7 +73,14 @@ class Packer {
   }
 
   static main(args) {
-
+    def packer = new Packer()
+    log.info "> processing ${args[0]}"
+    if (args.length == 1) {
+      def f = new File(args[0])
+      if (f.exists() && f.isFile()) {
+        packer.processConfiguration(f.newInputStream())
+      }
+    }
   }
 
 }

@@ -43,6 +43,5 @@ test.doFirst {
   }
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '1.6'
-}
+// Test are only executed when launching gradle with -Drun.tests=true
+test.onlyIf { Boolean.getBoolean('run.tests') }

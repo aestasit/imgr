@@ -42,7 +42,7 @@ class PuppetProvisioner extends BaseProvisioner {
       } else if (isCentOS()) {
         puppetRepo()
       } else {
-        log.info('Unknown operting system. Assuming Yum is already setup!')
+        log.info('Unknown operating system. Assuming Yum is already setup!')
       }
     } else {
       throw new PackerException('This operating system does not support Yum!')
