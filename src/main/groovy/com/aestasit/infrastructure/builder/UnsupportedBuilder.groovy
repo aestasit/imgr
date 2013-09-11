@@ -1,3 +1,3 @@
 package com.aestasit.infrastructure.builder
 
-class UnsupportedBuilder { } 
+class UnsupportedBuilder {}

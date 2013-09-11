@@ -1,9 +1,11 @@
 package com.aestasit.infrastructure
 
-import groovy.json.JsonSlurper
-import com.aestasit.infrastructure.builder.*
-import com.aestasit.infrastructure.provisioner.*
+import com.aestasit.infrastructure.builder.AmiBuilder
+import com.aestasit.infrastructure.builder.UnsupportedBuilder
 import com.aestasit.infrastructure.model.Box
+import com.aestasit.infrastructure.provisioner.PuppetProvisioner
+import com.aestasit.infrastructure.provisioner.UnsupportedProvisioner
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -19,7 +21,7 @@ class Packer {
     def shinyBox = builder.startInstance()
     log.info("> machine is started with id ${shinyBox.id}")
 
-    if (hasProvisioners (config)) {
+    if (hasProvisioners(config)) {
       def provisioner = getProvisioner(config, shinyBox)
       provisioner.provision()
     }
@@ -48,7 +50,7 @@ class Packer {
   def getProvisioner(builderConfig, Box aBox) {
 
     def provisioner
-    switch ( builderConfig.provisioners[0].type ) {
+    switch (builderConfig.provisioners[0].type) {
       case 'puppet-masterless':
         provisioner = new PuppetProvisioner(aBox, builderConfig.provisioners[0])
         break
@@ -60,7 +62,7 @@ class Packer {
 
   def getBuilder(builderConfig) {
     def builder
-    switch ( builderConfig.builders[0].type ) {
+    switch (builderConfig.builders[0].type) {
       case 'amazon-ebs':
         builder = new AmiBuilder(builderConfig.builders[0])
         break

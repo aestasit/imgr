@@ -1,6 +1,6 @@
 package com.aestasit.infrastructure.builder
 
-import com.aestasit.cloud.aws.*
+import com.aestasit.cloud.aws.EC2Client
 import com.aestasit.infrastructure.model.Box
 import groovy.util.logging.Slf4j
 
@@ -14,8 +14,8 @@ class AmiBuilder {
   String sourceAmi
   String sshUsername
   String amiRegion
-  String keyPairName
-  String keyPairPath // This should go
+  String keyPairName // TODO this should gp
+  String keyPairPath // TODO This should go
 
   def ec2
 
@@ -43,22 +43,22 @@ class AmiBuilder {
   Box startInstance() {
 
     def instance = ec2.startInstance(keyPairName,
-                      sourceAmi,
-                      'aestas-default', //TODO should use temporary security by default
-                      instanceType,
-                      true, -1, amiName)
+        sourceAmi,
+        'aestas-default', //TODO should use temporary security by default
+        instanceType,
+        true, -1, amiName)
 
-    new Ec2Box(host:instance.host,
-               port:22,
-               keyPath:keyPairPath,
-               user:sshUsername,
-               instanceId:instance.instanceId)
+    new Ec2Box(host: instance.host,
+        port: 22,
+        keyPath: keyPairPath,
+        user: sshUsername,
+        instanceId: instance.instanceId)
   }
 
-  
+
   void createImage(Ec2Box box, name, description) {
 
-    ec2.createImage(box.instanceId, name, description,true,120,5)
+    ec2.createImage(box.instanceId, name, description, true, 120, 5)
   }
 
 }

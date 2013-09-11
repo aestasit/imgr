@@ -7,7 +7,9 @@ build
 # IDE IGNORE
 
 .idea
-gramazon.iml
+*.iml
+*.iws
+*.ipr
 out
 
 # PROJECT IGNORE

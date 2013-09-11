@@ -1,9 +1,11 @@
 package com.aestasit.infrastructure.provisioner
 
-import com.aestasit.infrastructure.model.*
-import com.aestasit.infrastructure.*
-import static com.aestasit.infrastructure.provisioner.PackageProvider.*
+import com.aestasit.infrastructure.PackerException
+import com.aestasit.infrastructure.model.Box
 import groovy.util.logging.Slf4j
+
+import static com.aestasit.infrastructure.provisioner.PackageProvider.APT
+import static com.aestasit.infrastructure.provisioner.PackageProvider.YUM
 
 @Slf4j
 class PuppetProvisioner extends BaseProvisioner {
@@ -19,9 +21,11 @@ class PuppetProvisioner extends BaseProvisioner {
 
   void provision() {
 
-    //updateRepos() // w
-    //install() // w
-
+    log.info '> installing Puppet: updating repository on remote machine...'
+    updateRepos()
+    log.info '> installing Puppet...'
+    install()
+    log.info '> applying Puppet configuration...'
     applyManifest(provisionerConf)
 
   }
@@ -45,9 +49,9 @@ class PuppetProvisioner extends BaseProvisioner {
     }
   }
 
- /**
-  * Install
-  */
+  /**
+   * Install
+   */
   private void install() {
 
     if (isAmazonLinux()) {
@@ -60,17 +64,17 @@ class PuppetProvisioner extends BaseProvisioner {
     if (isRedHat() || isAmazonLinux() || isCentOS()) {
       log.debug 'installing puppet for RH,AL,COS'
       installPackages(YUM, [
-        'libselinux',
-        'libselinux-ruby',
-        'facter',
-        'puppet',
+          'libselinux',
+          'libselinux-ruby',
+          'facter',
+          'puppet',
       ])
     } else if (isDebian()) {
       log.debug 'installing puppet for DB'
 
       installPackages(APT, [
-        'facter',
-        'puppet',
+          'facter',
+          'puppet',
       ])
     } else {
       throw new PackerException('Unknown operating system. Puppet will not be installed!')
@@ -80,36 +84,36 @@ class PuppetProvisioner extends BaseProvisioner {
 
   }
 
- 
+
   private void applyManifest(provisionerConf) {
 
     def manifestFile = new File(provisionerConf.manifest_file).name
     log.debug "manifest file is $manifestFile"
     // TODO supporting only one manifest now...
     log.info '> Uploading new Puppet manifest'
-    session.scp (provisionerConf.manifest_file,
-                 provisionerConf.staging_directory)
+    session.scp(provisionerConf.manifest_file,
+        provisionerConf.staging_directory)
 
     // Apply default manifest.
-    log.info'> Applying Puppet configuration'
+    log.info '> Applying Puppet configuration'
     session.exec "sudo /usr/bin/puppet apply -v ${provisionerConf.staging_directory}/${manifestFile}"
 
   }
 
 
   private puppetRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo', 
-      readResourceFile('/repos/puppet.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo',
+        readResourceFile('/repos/puppet.repo'))
   }
 
   private epelRepo() {
     session.uploadTxtAsRoot('/etc/yum.repos.d/epel.repo',
-      readResourceFile('/repos/epel.repo'))
+        readResourceFile('/repos/epel.repo'))
   }
 
   private centosRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/centos.repo', 
-      readResourceFile('/repos/centos.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/centos.repo',
+        readResourceFile('/repos/centos.repo'))
   }
 
 }

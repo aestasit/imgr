@@ -1,9 +1,9 @@
 package com.aestasit.infrastructure.provisioner
 
-import com.aestasit.infrastructure.*
-import com.aestasit.infrastructure.model.*
-import static com.aestasit.infrastructure.provisioner.PackageProvider.*
+import com.aestasit.infrastructure.PackerException
 import groovy.util.logging.Slf4j
+
+import static com.aestasit.infrastructure.provisioner.PackageProvider.*
 
 @Slf4j
 abstract class BaseProvisioner {
@@ -81,7 +81,7 @@ abstract class BaseProvisioner {
         log.info("Package is already installed: $name")
       } else {
         log.info("Installing: $name")
-          session.exec(cmd)
+        session.exec(cmd)
       }
     } else {
       throw new PackerException("yum is not available on this system!")
@@ -117,10 +117,10 @@ abstract class BaseProvisioner {
   def installPackages(PackageProvider provider, Collection packages) {
     packages.each { pkg ->
       switch (provider) {
-        case YUM : installYumPackage(pkg); break;
-        case APT : installAptPackage(pkg); break;
-        case GEM : installGem(pkg); break;
-        default : throw new PackerException("Package provider is not supported!")
+        case YUM: installYumPackage(pkg); break;
+        case APT: installAptPackage(pkg); break;
+        case GEM: installGem(pkg); break;
+        default: throw new PackerException("Package provider is not supported!")
       }
     }
   }

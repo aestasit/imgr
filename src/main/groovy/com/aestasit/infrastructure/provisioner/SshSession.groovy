@@ -1,11 +1,10 @@
 package com.aestasit.infrastructure.provisioner
 
-import com.aestasit.ssh.dsl.SshDslEngine
+import com.aestasit.infrastructure.PackerException
 import com.aestasit.ssh.SshOptions
-import com.aestasit.ssh.dsl.*
+import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.SysOutLogger
 import groovy.util.logging.Slf4j
-import com.aestasit.infrastructure.*
 
 @Slf4j
 class SshSession {
@@ -31,10 +30,10 @@ class SshSession {
 
   }
 
- /**
-  * upload a file or folder to a remote folder
-  */
-  def scp( _from, _to) {
+  /**
+   * upload a file or folder to a remote folder
+   */
+  def scp(_from, _to) {
     def res
     def fileFrom = new File(_from)
     boolean isDir = false
@@ -50,7 +49,7 @@ class SshSession {
         } else {
           from { localFile _from }
         }
-        into { remoteDir _to}
+        into { remoteDir _to }
       }
     }
     res
@@ -79,12 +78,12 @@ class SshSession {
   def exec(String command) {
     def res
     engine.remoteSession {
-        try {
-          res = exec command
-        } catch (com.aestasit.ssh.SshException se) {
-          log.info "Previous command [$command] failed, let's try with sudo"
-          res = exec "sudo $command"
-        }
+      try {
+        res = exec command
+      } catch (com.aestasit.ssh.SshException se) {
+        log.info "Previous command [$command] failed, let's try with sudo"
+        res = exec "sudo $command"
+      }
     }
     res
 
