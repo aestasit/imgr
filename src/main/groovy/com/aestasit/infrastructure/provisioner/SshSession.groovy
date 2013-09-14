@@ -33,7 +33,7 @@ class SshSession {
   /**
    * upload a file or folder to a remote folder
    */
-  def scp(_from, _to) {
+  def scp( String _from, String _to) {
     def res
     def fileFrom = new File(_from)
     boolean isDir = false
@@ -50,17 +50,6 @@ class SshSession {
           from { localFile _from }
         }
         into { remoteDir _to }
-      }
-    }
-    res
-  }
-
-  def _scp(Closure cl) {
-
-    def res
-    engine.remoteSession {
-      scp {
-        cl()
       }
     }
     res

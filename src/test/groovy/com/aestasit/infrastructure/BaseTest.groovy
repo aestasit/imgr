@@ -39,4 +39,8 @@ class BaseTest {
     }
     return value
   }
+
+  def getConfig(String c) {
+    new ByteArrayInputStream(c.getBytes("UTF-8"))
+  }
 }

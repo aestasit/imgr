@@ -53,7 +53,6 @@ class AmiBuilder {
   }
 
   Box startInstance() {
-
     def instance = ec2.startInstance(keyPairName,
         sourceAmi,
         'aestas-default', //TODO should use temporary security by default

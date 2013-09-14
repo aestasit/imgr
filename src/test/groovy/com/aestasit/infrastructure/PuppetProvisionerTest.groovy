@@ -37,7 +37,8 @@ class PuppetProvisionerTest extends BaseTest {
   }
   """
 
-  @Test
+
+  @Ignore
   void testConfig() {
     def testBox = new Box(host:'ec2-176-34-93-116.eu-west-1.compute.amazonaws.com',
                           user:'ec2-user',

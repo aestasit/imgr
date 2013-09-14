@@ -18,7 +18,7 @@ class PuppetProvisioner extends BaseProvisioner {
     provisionerConf = config
   }
 
-
+  @Override
   void provision() {
 
     log.info '> installing Puppet: updating repository on remote machine...'
