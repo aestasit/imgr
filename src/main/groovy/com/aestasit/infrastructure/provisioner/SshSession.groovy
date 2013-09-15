@@ -33,7 +33,7 @@ class SshSession {
   /**
    * upload a file or folder to a remote folder
    */
-  def scp( String _from, String _to) {
+  def scp(String _from, String _to) {
     def res
     def fileFrom = new File(_from)
     boolean isDir = false

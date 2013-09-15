@@ -1,11 +1,9 @@
 package com.aestasit.infrastructure
 
-import static org.junit.Assert.*
-import groovy.time.TimeCategory
-import com.aestasit.infrastructure.model.*
-import com.aestasit.infrastructure.provisioner.*
-import org.junit.*
+import com.aestasit.infrastructure.model.Box
+import com.aestasit.infrastructure.provisioner.PuppetProvisioner
 import groovy.json.JsonSlurper
+import org.junit.Ignore
 
 class PuppetProvisionerTest extends BaseTest {
 
@@ -40,10 +38,10 @@ class PuppetProvisionerTest extends BaseTest {
 
   @Ignore
   void testConfig() {
-    def testBox = new Box(host:'ec2-176-34-93-116.eu-west-1.compute.amazonaws.com',
-                          user:'ec2-user',
-                          port:21,
-                          keyPath:"${KEY_LOCATION}")
+    def testBox = new Box(host: 'ec2-176-34-93-116.eu-west-1.compute.amazonaws.com',
+        user: 'ec2-user',
+        port: 21,
+        keyPath: "${KEY_LOCATION}")
 
     def config = new JsonSlurper().parseText(config)
     new PuppetProvisioner(testBox, config.provisioners[0]).provision()

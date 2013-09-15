@@ -3,7 +3,6 @@ package com.aestasit.infrastructure
 import com.aestasit.cloud.aws.EC2Client
 import com.aestasit.infrastructure.builder.AmiBuilder
 import com.aestasit.infrastructure.builder.Ec2Box
-import com.aestasit.infrastructure.model.Box
 import com.aestasit.infrastructure.provisioner.PuppetProvisioner
 import com.aestasit.infrastructure.provisioner.ShellProvisioner
 import org.junit.After
@@ -93,8 +92,8 @@ class PackerTest extends BaseTest {
 
     def invocationCount = 0
 
-    AmiBuilder.metaClass.startInstance = { ->
-      new Ec2Box(instanceId:'129', host:'x', user:'y', keyPath: '/')
+    AmiBuilder.metaClass.startInstance = {->
+      new Ec2Box(instanceId: '129', host: 'x', user: 'y', keyPath: '/')
     }
 
     AmiBuilder.metaClass.createImage = { Ec2Box box, String name, String description ->
