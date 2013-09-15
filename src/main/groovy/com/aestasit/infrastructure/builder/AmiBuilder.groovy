@@ -16,7 +16,7 @@ class AmiBuilder {
   String amiRegion
   String keyPairName // TODO this should gp
   String keyPairPath // TODO This should go
-
+  String securityGroup // TODO This should go
   def ec2
 
   AmiBuilder(conf) {
@@ -31,6 +31,7 @@ class AmiBuilder {
 
     keyPairName = conf.keypair // TODO This should go
     keyPairPath = conf.keypair_location // TODO This should go
+    securityGroup = conf.security_group // TODO This should go
 
     if (!accessKey) {
       accessKey = System.getenv('AWS_ACCESS_KEY_ID')
@@ -53,9 +54,10 @@ class AmiBuilder {
   }
 
   Box startInstance() {
+    log.info 'Launching a source AWS instance...'
     def instance = ec2.startInstance(keyPairName,
         sourceAmi,
-        'aestas-default', //TODO should use temporary security by default
+        securityGroup,
         instanceType,
         true, -1, amiName)
 

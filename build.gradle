@@ -29,6 +29,7 @@ dependencies {
   compile "org.slf4j:slf4j-api:$slf4jVersion"
   compile "ch.qos.logback:logback-classic:$logbackVersion"
   compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+  compile 'org.fusesource.jansi:jansi:1.11'
   testCompile 'junit:junit:4.+'
 
 }

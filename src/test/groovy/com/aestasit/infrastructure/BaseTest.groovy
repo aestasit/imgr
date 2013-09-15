@@ -11,7 +11,8 @@ class BaseTest {
   protected static String DEFAULT_KEY_NAME = ''
   protected static String KEY_LOCATION = ''
   protected static String DEFAULT_REGION = ''
-  
+  protected static String SECURITY_GROUP = ''
+
 
 
   @BeforeClass
@@ -21,6 +22,8 @@ class BaseTest {
     DEFAULT_KEY_NAME = readProperty('awsDefaultKeyName')
     KEY_LOCATION = readProperty('awsDefaultKeyFile')
     DEFAULT_REGION = readProperty('awsDefaultRegion', 'eu-west-1')
+    SECURITY_GROUP = readProperty('awsDefaultSecurityGroup')
+
   }
 
 

@@ -5,6 +5,8 @@ import com.aestasit.infrastructure.builder.AmiBuilder
 import com.aestasit.infrastructure.builder.Ec2Box
 import com.aestasit.infrastructure.provisioner.PuppetProvisioner
 import com.aestasit.infrastructure.provisioner.ShellProvisioner
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
@@ -25,7 +27,8 @@ class PackerTest extends BaseTest {
     "ssh_username": "ec2-user",
     "ami_name": "packer-quick-start",
     "keypair": "${DEFAULT_KEY_NAME}",
-    "keypair_location": "${KEY_LOCATION}"
+    "keypair_location": "${KEY_LOCATION}",
+    "security_group": "${SECURITY_GROUP}"
   }]
   }
   """
@@ -41,7 +44,8 @@ class PackerTest extends BaseTest {
     "ssh_username": "ec2-user",
     "ami_name": "packer-quick-start",
     "keypair": "${DEFAULT_KEY_NAME}",
-    "keypair_location": "${KEY_LOCATION}"
+    "keypair_location": "${KEY_LOCATION}",
+    "security_group": "{SECURITY_GROUP}"
   }],
   "provisioners": [{
     "type": "shell",
@@ -87,7 +91,16 @@ class PackerTest extends BaseTest {
     assertEquals(1, ec2.listInstances("packer-quick-start").size())
   }
 
-  @Test
+  @Ignore
+  void checkImageIsNotCreated() {
+
+    def json = new JsonSlurper().parseText(config)
+    json.put('skip_image', 'true')
+    new Packer().processConfiguration(getConfig(JsonOutput.toJson(json)))
+    assertEquals(1, ec2.listInstances("packer-quick-start").size())
+  }
+
+  @Ignore
   void testCheckHasProvisioners() {
 
     def invocationCount = 0

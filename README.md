@@ -55,7 +55,7 @@ If not specified, Packer will attempt to read this from environmental variables 
 - `ami_name` (string) The name of the generated AMI. Please note that the name must be unique.
 - `keypair` (string) The name of the key pair used to connect to your EC2 instance. __This option will be removed soon__
 - `keypair_location`  (string) The path to the key pair stored on the local machine __This option will be removed soon__
-
+- `security_group` (string) The name of the security group to use for the instance  __This option will be removed soon__
 
 The `amazon-ebs` builder creates an instance which root device is backed by Amazon EBS (for more information about instance types read [here](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html#storage-for-the-root-device).
 
@@ -71,7 +71,8 @@ Here is an example of a Builder:
         "ssh_username": "ec2-user",
         "ami_name": "groovy",
         "keypair": "mykeypair",
-        "keypair_location":"/Users/John/.ec2/mykeypair.pem"
+        "keypair_location":"/Users/John/.ec2/mykeypair.pem",
+        "security_group": "default-security"
     }]
 
 
@@ -134,7 +135,8 @@ Here is an example of a shell provisioner:
             "ssh_username": "ec2-user",
             "ami_name": "groovy",
             "keypair": "mykeypair",
-            "keypair_location":"/Users/John/.ec2/mykeypair.pem"
+            "keypair_location":"/Users/John/.ec2/mykeypair.pem",
+            "security_group": "default-security"
         }],
         "provisioners": [{
             "type": "puppet-masterless",

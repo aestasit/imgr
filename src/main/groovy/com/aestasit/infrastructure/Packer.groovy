@@ -17,9 +17,12 @@ class Packer {
     def config = new JsonSlurper().parse(f.newReader())
     validate(config)
 
+    def skipImage = config.skip_image=='true'?true:false
+
+
     def builder = getBuilder(config)
     def shinyBox = builder.startInstance()
-    log.info("> machine is started with id ${shinyBox.id}")
+    log.info("machine is started with id ${shinyBox.id}")
 
     if (hasProvisioners(config)) {
       config.provisioners.eachWithIndex {p, id ->
@@ -27,10 +30,13 @@ class Packer {
         provisioner.provision()
       }
 
-      log.info("> provisioning completed, creating image now...")
     }
-    builder.createImage(shinyBox, 'name', 'description')
+    log.info("provisioning completed")
 
+    if (!skipImage) {
+      log.info("creating image now...")
+      builder.createImage(shinyBox, 'name', 'description')
+    }
   }
 
 
@@ -82,7 +88,7 @@ class Packer {
 
   static main(args) {
     def packer = new Packer()
-    log.info "> processing ${args[0]}"
+    log.debug "> processing ${args[0]}"
     if (args.length == 1) {
       def f = new File(args[0])
       if (f.exists() && f.isFile()) {
