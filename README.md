@@ -30,13 +30,13 @@ Tests are disabled by default. To enable the tests, use
 
 - Run `bin/groovy-packer config.json` to execute a configuration located in the `config.json` file.
 
-## Configuration
+## Template configuration
 
-_groovy-packer_ configuration is based on JSON. A _groovy-packer_ configuration file is divided in two sections:
+_groovy-packer_ configuration is based on a template written in in JSON. A template contains the various components
+required to build a machine image. A template has two sections:
 
 - Builder
 - Provisioner
-
 
 ### Builders
 
@@ -56,6 +56,9 @@ If not specified, Packer will attempt to read this from environmental variables 
 - `keypair` (string) The name of the key pair used to connect to your EC2 instance. __This option will be removed soon__
 - `keypair_location`  (string) The path to the key pair stored on the local machine __This option will be removed soon__
 
+
+The `amazon-ebs` builder creates an instance which root device is backed by Amazon EBS (for more information about instance types read [here](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html#storage-for-the-root-device).
+
 Here is an example of a Builder:
 
 	"builders": [{
@@ -71,4 +74,16 @@ Here is an example of a Builder:
         "keypair_location":"/Users/John/.ec2/mykeypair.pem"
     }]
 
+
+### Provisioners
+
+The `provisioners` section of the template is an array of one or more objects that defines the provisioners that will be
+used to install and configure software for the machines created by each of the builders
+
+At the moment there are two provisioners supported: a Shell provisioner and a Puppet provisioner.
+
+#### Shell provisioner
+
+
+#### Puppet provisioner
 
