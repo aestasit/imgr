@@ -49,7 +49,7 @@ Packer will attempt to read this from the environmental variable `AWS_ACCESS_KEY
 - `secret_key` (string) The secret key used to communicate with AWS.
 If not specified, Packer will attempt to read this from environmental variables `AWS_SECRET_ACCESS_KEY`
 - `region` (string) The name of the region, such as "us-east-1", in which to launch the EC2 instance to create the AMI.
-- `source_ami` (string) The AMI used to start the machine that will be configured. 
+- `source_ami` (string) The AMI used to start the machine that will be configured.
 - `instance_type` (string) The EC2 instance type used for starting the machine. For a list of valid instance types refer to the [Amazon documentation](https://aws.amazon.com/ec2/instance-types/#instance-details).
 - `ssh_username` (string) The username used by _groovy-packer_ to communicate with the machine over SSH.
 - `ami_name` (string) The name of the generated AMI. Please note that the name must be unique.
@@ -78,12 +78,67 @@ Here is an example of a Builder:
 ### Provisioners
 
 The `provisioners` section of the template is an array of one or more objects that defines the provisioners that will be
-used to install and configure software for the machines created by each of the builders
+used to install and configure software for the machines created by each the builders.
 
 At the moment there are two provisioners supported: a Shell provisioner and a Puppet provisioner.
 
 #### Shell provisioner
 
+A shell provisioner allows to configure a box either by sending an array of commands or a Shell script.
+
+The configuration for a shell provisioner has 3 arguments:
+
+- `type` (string) the provisioner type, in the case of the shell provisioner the value must be `shell`.
+- `inline` (array of string) This is an array of commands to execute.
+The commands are concatenated by newlines and turned into a single file, so they are all executed within the same context.
+This allows you to change directories in one command and use something in the directory in the next and so on.
+Inline scripts are the easiest way to pull of simple tasks within the machine.
+- `script` (string) The absolute path to a script to upload and execute in the machine
+
+Here is an example of a shell provisioner:
+
+    "provisioners": [{
+        "type": "shell",
+        "inline": ["uname -a > uname.txt","touch test.txt"],
+        "script":"/Users/john/provision/myscript.sh"
+    }]
 
 #### Puppet provisioner
 
+The Puppet provisioner installs and configures software on machines built by Packer using [Puppet](http://puppetlabs.com/puppet/puppet-open-source). A Puppet manifest is uploaded to the target machine and executed using `puppet apply`. The provisioner will even install Puppet onto your machine if it isn't already installed.
+
+At the moment, it is possible to apply a single manifest. The configuration for the Puppet provisioner has only three fields:
+
+- `type` (string) the provisioner type, in the case of the shell provisioner the value must be `puppet-masterless`.
+- `manifest_file` (string) the absolute path of the Puppet manifest on the local filesystem.
+- `staging_directory` (string) the location on the remote machine to where the manifest is uploaded. If empty, the manifest is uploaded in the user home.
+
+Here is an example of a shell provisioner:
+
+    "provisioners": [{
+        "type": "puppet-masterless",
+        "manifest_file": "/Users/john/puppet/site.pp",
+        "staging_directory" : "/tmp"
+    }]
+
+## Complete configuration example
+
+    {
+        "builders": [{
+            "type": "amazon-ebs",
+            "access_key": "AMAZON_1234556790",
+            "secret_key": "AMAZON_SECRET_12345",
+            "region": "eu-west-1",
+            "source_ami": "ami-9bf6e0ef",
+            "instance_type": "t1.micro",
+            "ssh_username": "ec2-user",
+            "ami_name": "groovy",
+            "keypair": "mykeypair",
+            "keypair_location":"/Users/John/.ec2/mykeypair.pem"
+        }],
+        "provisioners": [{
+            "type": "puppet-masterless",
+            "manifest_file": "/Users/john/puppet/site.pp",
+            "staging_directory" : "/tmp"
+        }]
+    }
