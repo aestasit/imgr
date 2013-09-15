@@ -2,7 +2,7 @@
 
 ## A [Packer](http://www.packer.io/) inspired tool written in Groovy
 
-_groovy-packer_ is a tool to create Amazon EC2 AMIs from a configuration file.
+_groovy-packer_ is a tool to create Amazon EC2 AMIs (images) from a configuration file.
 
 It is built with extensibility in mind, therefore it is easy to add new cloud providers.
 
@@ -46,9 +46,29 @@ The Amazon builder is named `amazon-ebs` and has the following properties:
 - `type` (string) the type of builder. At the moment only `amazon-ebs` is supported
 - `access_key` (string) the access key used to communicate with AWS. If not specified,
 Packer will attempt to read this from the environmental variable `AWS_ACCESS_KEY_ID`
-- secret_key (string) The secret key used to communicate with AWS.
+- `secret_key` (string) The secret key used to communicate with AWS.
 If not specified, Packer will attempt to read this from environmental variables `AWS_SECRET_ACCESS_KEY`
+- `region` (string) The name of the region, such as "us-east-1", in which to launch the EC2 instance to create the AMI.
+- `source_ami` (string) The AMI used to start the machine that will be configured. 
+- `instance_type` (string) The EC2 instance type used for starting the machine. For a list of valid instance types refer to the [Amazon documentation](https://aws.amazon.com/ec2/instance-types/#instance-details).
+- `ssh_username` (string) The username used by _groovy-packer_ to communicate with the machine over SSH.
+- `ami_name` (string) The name of the generated AMI. Please note that the name must be unique.
+- `keypair` (string) The name of the key pair used to connect to your EC2 instance. __This option will be removed soon__
+- `keypair_location`  (string) The path to the key pair stored on the local machine __This option will be removed soon__
+
+Here is an example of a Builder:
+
+	"builders": [{
+    	"type": "amazon-ebs",
+        "access_key": "AMAZON_1234556790",
+        "secret_key": "AMAZON_SECRET_12345",
+        "region": "eu-west-1",
+        "source_ami": "ami-9bf6e0ef",
+        "instance_type": "t1.micro",
+        "ssh_username": "ec2-user",
+        "ami_name": "groovy",
+        "keypair": "mykeypair",
+        "keypair_location":"/Users/John/.ec2/mykeypair.pem"
+    }]
 
 
-
-### Provisioners
