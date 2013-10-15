@@ -1,8 +1,8 @@
-# groovy-packer
+# imgr 
 
 ## A [Packer](http://www.packer.io/) inspired tool written in Groovy
 
-_groovy-packer_ is a tool to create Amazon EC2 AMIs (images) from a configuration file.
+_imgr_ is a tool to create Amazon EC2 AMIs (images) from a configuration file.
 
 It is built with extensibility in mind, therefore it is easy to add new cloud providers.
 

@@ -16,7 +16,7 @@ repositories {
 }
 
 configure(allprojects) {
-ext.groovy = '2.1.0'
+  ext.groovy = '2.1.0'
   ext.slf4jVersion = '1.7.5'
   ext.logbackVersion = '1.0.13'
 }
