@@ -27,7 +27,6 @@ task wrapper(type: Wrapper) {
 }
 
 dependencies {
-
   compile "org.codehaus.groovy:groovy-all:${groovy}"
   compile 'com.aestasit.cloud.aws:gramazon:0.2-SNAPSHOT'
   compile 'com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT'
@@ -36,7 +35,6 @@ dependencies {
   compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
   compile 'org.fusesource.jansi:jansi:1.11'
   testCompile 'junit:junit:4.+'
-
 }
 
 test.doFirst {
