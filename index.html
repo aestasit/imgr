@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Imgr by aestasit</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Imgr</h1>
+        <p></p>
+
+        <p class="view"><a href="https://github.com/aestasit/imgr">View the Project on GitHub <small>aestasit/imgr</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/aestasit/imgr/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/aestasit/imgr/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/aestasit/imgr">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="imgr" class="anchor" href="#imgr"><span class="octicon octicon-link"></span></a>imgr</h1>
+
+<h2>
+<a name="a-packer-inspired-tool-written-in-groovy" class="anchor" href="#a-packer-inspired-tool-written-in-groovy"><span class="octicon octicon-link"></span></a>A <a href="http://www.packer.io/">Packer</a> inspired tool written in Groovy</h2>
+
+<p><em>imgr</em> is a tool to create Amazon EC2 AMIs (images) from a configuration file.</p>
+
+<p>It is built with extensibility in mind, therefore it is easy to add new cloud providers.</p>
+
+<p>Currently, it supports configuring a box via a <a href="http://projects.puppetlabs.com/">Puppet</a> manifest or a Shell script.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>Java 6</li>
+</ul><h2>
+<a name="building" class="anchor" href="#building"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<p><code>gradlew clean build</code></p>
+
+<p>Tests are disabled by default. To enable the tests, use</p>
+
+<p><code>gradlew clean build -Drun.tests=true</code></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<ul>
+<li>Run <code>gradlew distZip</code> (or <code>gradlew.bat distZip</code> on Windows )</li>
+<li>An archive containing the application's runtime and script is generated in the 'build/distributions' folder</li>
+<li>Unzip the archive in any location</li>
+</ul><h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<ul>
+<li>Run <code>bin/groovy-packer config.json</code> to execute a configuration located in the <code>config.json</code> file.</li>
+</ul><h2>
+<a name="template-configuration" class="anchor" href="#template-configuration"><span class="octicon octicon-link"></span></a>Template configuration</h2>
+
+<p><em>groovy-packer</em> configuration is based on a template written in in JSON. A template contains the various components
+required to build a machine image. A template has two sections:</p>
+
+<ul>
+<li>Builder</li>
+<li>Provisioner</li>
+</ul><h3>
+<a name="builders" class="anchor" href="#builders"><span class="octicon octicon-link"></span></a>Builders</h3>
+
+<p>A <em>builder</em> represent the description of how to start a Virtual Machine. Currently, <em>groovy-packer</em> only supports Amazon EC2.
+The Amazon builder is named <code>amazon-ebs</code> and has the following properties:</p>
+
+<ul>
+<li>
+<code>type</code> (string) the type of builder. At the moment only <code>amazon-ebs</code> is supported</li>
+<li>
+<code>access_key</code> (string) the access key used to communicate with AWS. If not specified,
+Packer will attempt to read this from the environmental variable <code>AWS_ACCESS_KEY_ID</code>
+</li>
+<li>
+<code>secret_key</code> (string) The secret key used to communicate with AWS.
+If not specified, Packer will attempt to read this from environmental variables <code>AWS_SECRET_ACCESS_KEY</code>
+</li>
+<li>
+<code>region</code> (string) The name of the region, such as "us-east-1", in which to launch the EC2 instance to create the AMI.</li>
+<li>
+<code>source_ami</code> (string) The AMI used to start the machine that will be configured.</li>
+<li>
+<code>instance_type</code> (string) The EC2 instance type used for starting the machine. For a list of valid instance types refer to the <a href="https://aws.amazon.com/ec2/instance-types/#instance-details">Amazon documentation</a>.</li>
+<li>
+<code>ssh_username</code> (string) The username used by <em>groovy-packer</em> to communicate with the machine over SSH.</li>
+<li>
+<code>ami_name</code> (string) The name of the generated AMI. Please note that the name must be unique.</li>
+<li>
+<code>keypair</code> (string) The name of the key pair used to connect to your EC2 instance. <strong>This option will be removed soon</strong>
+</li>
+<li>
+<code>keypair_location</code>  (string) The path to the key pair stored on the local machine <strong>This option will be removed soon</strong>
+</li>
+<li>
+<code>security_group</code> (string) The name of the security group to use for the instance  <strong>This option will be removed soon</strong>
+</li>
+</ul><p>The <code>amazon-ebs</code> builder creates an instance which root device is backed by Amazon EBS (for more information about instance types read <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html#storage-for-the-root-device">here</a>.</p>
+
+<p>Here is an example of a Builder:</p>
+
+<pre><code>"builders": [{
+    "type": "amazon-ebs",
+    "access_key": "AMAZON_1234556790",
+    "secret_key": "AMAZON_SECRET_12345",
+    "region": "eu-west-1",
+    "source_ami": "ami-9bf6e0ef",
+    "instance_type": "t1.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "groovy",
+    "keypair": "mykeypair",
+    "keypair_location":"/Users/John/.ec2/mykeypair.pem",
+    "security_group": "default-security"
+}]
+</code></pre>
+
+<h3>
+<a name="provisioners" class="anchor" href="#provisioners"><span class="octicon octicon-link"></span></a>Provisioners</h3>
+
+<p>The <code>provisioners</code> section of the template is an array of one or more objects that defines the provisioners that will be
+used to install and configure software for the machines created by each the builders.</p>
+
+<p>At the moment there are two provisioners supported: a Shell provisioner and a Puppet provisioner.</p>
+
+<h4>
+<a name="shell-provisioner" class="anchor" href="#shell-provisioner"><span class="octicon octicon-link"></span></a>Shell provisioner</h4>
+
+<p>A shell provisioner allows to configure a box either by sending an array of commands or a Shell script.</p>
+
+<p>The configuration for a shell provisioner has 3 arguments:</p>
+
+<ul>
+<li>
+<code>type</code> (string) the provisioner type, in the case of the shell provisioner the value must be <code>shell</code>.</li>
+<li>
+<code>inline</code> (array of string) This is an array of commands to execute.
+The commands are concatenated by newlines and turned into a single file, so they are all executed within the same context.
+This allows you to change directories in one command and use something in the directory in the next and so on.
+Inline scripts are the easiest way to pull of simple tasks within the machine.</li>
+<li>
+<code>script</code> (string) The absolute path to a script to upload and execute in the machine</li>
+</ul><p>Here is an example of a shell provisioner:</p>
+
+<pre><code>"provisioners": [{
+    "type": "shell",
+    "inline": ["uname -a &gt; uname.txt","touch test.txt"],
+    "script":"/Users/john/provision/myscript.sh"
+}]
+</code></pre>
+
+<h4>
+<a name="puppet-provisioner" class="anchor" href="#puppet-provisioner"><span class="octicon octicon-link"></span></a>Puppet provisioner</h4>
+
+<p>The Puppet provisioner installs and configures software on machines built by Packer using <a href="http://puppetlabs.com/puppet/puppet-open-source">Puppet</a>. A Puppet manifest is uploaded to the target machine and executed using <code>puppet apply</code>. The provisioner will even install Puppet onto your machine if it isn't already installed.</p>
+
+<p>At the moment, it is possible to apply a single manifest. The configuration for the Puppet provisioner has only three fields:</p>
+
+<ul>
+<li>
+<code>type</code> (string) the provisioner type, in the case of the shell provisioner the value must be <code>puppet-masterless</code>.</li>
+<li>
+<code>manifest_file</code> (string) the absolute path of the Puppet manifest on the local filesystem.</li>
+<li>
+<code>staging_directory</code> (string) the location on the remote machine to where the manifest is uploaded. If empty, the manifest is uploaded in the user home.</li>
+</ul><p>Here is an example of a shell provisioner:</p>
+
+<pre><code>"provisioners": [{
+    "type": "puppet-masterless",
+    "manifest_file": "/Users/john/puppet/site.pp",
+    "staging_directory" : "/tmp"
+}]
+</code></pre>
+
+<h2>
+<a name="complete-configuration-example" class="anchor" href="#complete-configuration-example"><span class="octicon octicon-link"></span></a>Complete configuration example</h2>
+
+<pre><code>{
+    "builders": [{
+        "type": "amazon-ebs",
+        "access_key": "AMAZON_1234556790",
+        "secret_key": "AMAZON_SECRET_12345",
+        "region": "eu-west-1",
+        "source_ami": "ami-9bf6e0ef",
+        "instance_type": "t1.micro",
+        "ssh_username": "ec2-user",
+        "ami_name": "groovy",
+        "keypair": "mykeypair",
+        "keypair_location":"/Users/John/.ec2/mykeypair.pem",
+        "security_group": "default-security"
+    }],
+    "provisioners": [{
+        "type": "puppet-masterless",
+        "manifest_file": "/Users/john/puppet/site.pp",
+        "staging_directory" : "/tmp"
+    }]
+}
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/aestasit">aestasit</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
