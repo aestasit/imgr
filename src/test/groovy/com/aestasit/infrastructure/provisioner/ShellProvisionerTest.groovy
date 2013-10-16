@@ -16,17 +16,15 @@
 
 package com.aestasit.infrastructure.provisioner
 
-import com.aestasit.infrastructure.BaseTest
-
 import static org.junit.Assert.*
-import groovy.time.TimeCategory
-import com.aestasit.infrastructure.model.*
-import com.aestasit.infrastructure.provisioner.*
-import org.junit.*
 import groovy.json.JsonSlurper
 
-class ShellProvisionerTest extends BaseTest {
+import org.junit.*
 
+import com.aestasit.infrastructure.BaseTest
+import com.aestasit.infrastructure.model.*
+
+class ShellProvisionerTest extends BaseTest {
 
   def config = """{
   "builders": [{
