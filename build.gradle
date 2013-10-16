@@ -1,7 +1,21 @@
 
-apply plugin: 'groovy'
+buildscript {
+  repositories { mavenCentral() }
+  dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' }
+  dependencies { classpath 'org.ajoberstar:gradle-git:0.6.3' }
+}
+
 apply plugin: 'application'
+apply plugin: 'groovy'
+apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'cobertura'
+apply plugin: 'github-pages'
+
+apply from: 'repos.gradle'
+apply from: 'sonar.gradle'
+apply from: 'docs.gradle'
 
 group = 'com.aestasit.infrastructure'
 version = '0.1-SNAPSHOT'
@@ -22,10 +36,6 @@ configure(allprojects) {
   ext.logbackVersion = '1.0.13'
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '1.8'
-}
-
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${groovy}"
   compile 'com.aestasit.cloud.aws:gramazon:0.2-SNAPSHOT'
@@ -35,6 +45,8 @@ dependencies {
   compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
   compile 'org.fusesource.jansi:jansi:1.11'
   testCompile 'junit:junit:4.+'
+  testRuntime 'ch.qos.logback:logback-core:1.0.7'
+  testRuntime 'ch.qos.logback:logback-classic:1.0.7'
 }
 
 test.doFirst {
@@ -48,3 +60,7 @@ test.doFirst {
 
 // Test are only executed when launching gradle with -Drun.tests=true
 test.onlyIf { Boolean.getBoolean('run.tests') }
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.8'
+}
