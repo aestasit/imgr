@@ -38,8 +38,8 @@ configure(allprojects) {
 
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${groovy}"
-  compile 'com.aestasit.cloud.aws:gramazon:0.2-SNAPSHOT'
-  compile 'com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT'
+  compile 'com.aestasit.infrastructure.aws:gramazon:0.2-SNAPSHOT'
+  compile 'com.aestasit.infrastructure.sshoogr:sshoogr:0.9-SNAPSHOT'
   compile "org.slf4j:slf4j-api:$slf4jVersion"
   compile "ch.qos.logback:logback-classic:$logbackVersion"
   compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
