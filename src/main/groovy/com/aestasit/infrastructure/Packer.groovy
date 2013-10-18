@@ -85,7 +85,6 @@ class Packer {
         provisioner = new ShellProvisioner(aBox, builderConfig.provisioners[index] )
         break
       default:
-
         provisioner = new UnsupportedProvisioner()
     }
 
@@ -103,9 +102,9 @@ class Packer {
   }
 
   static main(args) {
-    def packer = new Packer()
-    log.debug "> processing ${args[0]}"
+    def packer = new Packer()    
     if (args.length == 1) {
+      log.debug "> processing ${args[0]}"
       def f = new File(args[0])
       if (f.exists() && f.isFile()) {
         packer.processConfiguration(f.newInputStream())
