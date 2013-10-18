@@ -16,6 +16,7 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 import java.io.File;
+import java.util.Map;
 
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Slf4j;
