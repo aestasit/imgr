@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.imgr'
-version = '0.2.3-SNAPSHOT'
+version = '0.2.4-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }
@@ -31,11 +31,11 @@ configure(allprojects) {
 
 dependencies {
   compile localGroovy()
-  compile 'com.aestasit.infrastructure.aws:gramazon:0.2-SNAPSHOT'
+  compile 'com.aestasit.infrastructure.aws:gramazon:0.2.1-SNAPSHOT'
   compile 'com.aestasit.infrastructure.sshoogr:sshoogr:0.9.1-SNAPSHOT'
   compile "org.slf4j:slf4j-api:$slf4jVersion"
-  compile "ch.qos.logback:logback-classic:$logbackVersion"
   compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+  compile "ch.qos.logback:logback-classic:$logbackVersion"
   compile 'org.fusesource.jansi:jansi:1.11'
 }
 

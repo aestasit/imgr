@@ -31,14 +31,12 @@ import groovy.util.logging.Slf4j
 @InheritConstructors
 class ShellProvisioner extends BaseProvisioner {
 
-  Map provisionerConfiguration
-  
-  def DEFAULT_UPLOAD_DIR = '/tmp'
-  def DEFAULT_SCRIPT_NAME = 'script.sh'
+  static String DEFAULT_UPLOAD_DIR = '/tmp'
+  static String DEFAULT_SCRIPT_NAME = 'script.sh'
 
   @Override
   void provision() {
-    provisionerConfiguration.each { key, value ->
+    provisionerConfig.each { key, value ->
       switch (key) {
         case 'inline':
           upload(DEFAULT_UPLOAD_DIR, createFile(value))

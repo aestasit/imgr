@@ -46,8 +46,11 @@ class PuppetProvisioner extends BaseProvisioner {
     applyManifest(provisionerConfig)
   }
 
-
-  private updateRepos() {
+  /**
+   * Update package repository settings.
+   * 
+   */
+  private void updateRepos() {
     if (isYumAvailable()) {
       if (isRedHat()) {
         puppetRepo()
@@ -67,6 +70,7 @@ class PuppetProvisioner extends BaseProvisioner {
 
   /**
    * Install Puppet.
+   * 
    */
   private void install() {
 
@@ -95,40 +99,40 @@ class PuppetProvisioner extends BaseProvisioner {
     } else {
       throw new ImgrException('Unknown operating system. Puppet will not be installed!')
     }
+    
     // Create empty hiera.yaml file to avoid warning upon puppet apply.
     session.exec("touch /etc/puppet/hiera.yaml")
 
   }
 
+  /**
+   * Apply Puppet manifest.
+   * 
+   */
+  private void applyManifest() {
 
-  private void applyManifest(provisionerConf) {
-
-    def manifestFile = new File(provisionerConf.manifest_file).name
-    log.debug "manifest file is $manifestFile"
-    // TODO supporting only one manifest now...
+    def manifestFile = new File(provisionerConfig.manifest_file).name
+    log.debug "Manifest file is $manifestFile"
+    
     log.info '> Uploading new Puppet manifest'
-    session.scp(provisionerConf.manifest_file,
-        provisionerConf.staging_directory)
+    session.scp(provisionerConfig.manifest_file, provisionerConfig.staging_directory)
 
     // Apply default manifest.
     log.info '> Applying Puppet configuration'
-    session.exec "sudo /usr/bin/puppet apply -v ${provisionerConf.staging_directory}/${manifestFile}"
+    session.exec "sudo /usr/bin/puppet apply -v ${provisionerConfig.staging_directory}/${manifestFile}"
 
   }
 
   private puppetRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo',
-        readResourceFile('/repos/puppet.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo', readResourceFile('/repos/puppet.repo'))
   }
 
   private epelRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/epel.repo',
-        readResourceFile('/repos/epel.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/epel.repo', readResourceFile('/repos/epel.repo'))
   }
 
   private centosRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/centos.repo',
-        readResourceFile('/repos/centos.repo'))
+    session.uploadTxtAsRoot('/etc/yum.repos.d/centos.repo', readResourceFile('/repos/centos.repo'))
   }
 
 }
