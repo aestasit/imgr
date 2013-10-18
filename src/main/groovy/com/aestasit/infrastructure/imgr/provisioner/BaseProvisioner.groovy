@@ -40,13 +40,13 @@ abstract class BaseProvisioner {
   protected Map provisionerConfig
 
   BaseProvisioner(SshSession session, Map provisionerConfig) {
-    super()
     this.session = session
     this.provisionerConfig = provisionerConfig
   }
 
   BaseProvisioner(Box box, Map provisionerConfig) {
-    this(new SshSession(box.host, config.user, box.keyPath), provisionerConfig)
+    this.session = new SshSession(box.host, provisionerConfig.user, box.keyPath)
+    this.provisionerConfig = provisionerConfig
   }
 
   abstract void provision()

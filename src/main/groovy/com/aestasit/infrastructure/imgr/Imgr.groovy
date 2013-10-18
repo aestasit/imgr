@@ -93,17 +93,17 @@ class Imgr {
     }
   }
 
-  def getProvisioner(index, builderConfig, Box aBox) {
+  def getProvisioner(index, builderConfig, Box box) {
     def provisioner
     switch (builderConfig.provisioners[index].type) {
       case 'puppet-masterless':
-        provisioner = new PuppetProvisioner(aBox, builderConfig.provisioners[index])
+        provisioner = new PuppetProvisioner(box, builderConfig.provisioners[index])
         break
       case 'shell':
-        provisioner = new ShellProvisioner(aBox, builderConfig.provisioners[index] )
+        provisioner = new ShellProvisioner(box, builderConfig.provisioners[index])
         break
       case 'file':
-        provisioner = new FileProvisioner(aBox, builderConfig.provisioners[index] )
+        provisioner = new FileProvisioner(box, builderConfig.provisioners[index])
         break
       default:
         provisioner = new UnsupportedProvisioner()
