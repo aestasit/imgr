@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.model
+package com.aestasit.infrastructure.imgr.model
 
 import groovy.transform.Canonical
 

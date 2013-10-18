@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.builder
+package com.aestasit.infrastructure.imgr.builder
 
-import com.aestasit.infrastructure.model.Box
-
-class Ec2Box extends Box {
-
-  String instanceId
-
-  String getId() {
-    instanceId
-  }
-}
+class UnsupportedBuilder {}

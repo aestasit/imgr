@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.PackerException
+import com.aestasit.infrastructure.imgr.ImgrException
 import groovy.util.logging.Slf4j
 
-import static com.aestasit.infrastructure.provisioner.PackageProvider.*
+import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.*
 
 @Slf4j
 abstract class BaseProvisioner {
@@ -100,7 +100,7 @@ abstract class BaseProvisioner {
         session.exec(cmd)
       }
     } else {
-      throw new PackerException("yum is not available on this system!")
+      throw new ImgrException("yum is not available on this system!")
     }
   }
 
@@ -113,7 +113,7 @@ abstract class BaseProvisioner {
         session.exec("sudo apt-get -y install $name")
       }
     } else {
-      throw new PackerException("apt-get is not available on this system!")
+      throw new ImgrException("apt-get is not available on this system!")
     }
   }
 
@@ -126,7 +126,7 @@ abstract class BaseProvisioner {
         session.exec("gem install $name")
       }
     } else {
-      throw new PackerException("gem is not available on this system!")
+      throw new ImgrException("gem is not available on this system!")
     }
   }
 
@@ -136,7 +136,7 @@ abstract class BaseProvisioner {
         case YUM: installYumPackage(pkg); break;
         case APT: installAptPackage(pkg); break;
         case GEM: installGem(pkg); break;
-        default: throw new PackerException("Package provider is not supported!")
+        default: throw new ImgrException("Package provider is not supported!")
       }
     }
   }
@@ -151,7 +151,7 @@ abstract class BaseProvisioner {
 
     def stream = BaseProvisioner.class.getResourceAsStream(filename)
     if (stream) return stream.text
-    throw new PackerException("$filename not found in resources folder")
+    throw new ImgrException("$filename not found in resources folder")
 
   }
 

@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure
+package com.aestasit.infrastructure.imgr.model
 
-class PackerException extends RuntimeException {
+import groovy.transform.Canonical
 
-  PackerException(String message, Throwable cause) {
-    super(message, cause)
-  }
+@Canonical
+class PackageProvider {
 
-  PackerException(String message) {
-    super(message)
-  }
+
 }

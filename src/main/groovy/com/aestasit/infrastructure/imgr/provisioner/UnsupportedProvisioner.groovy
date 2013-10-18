@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.builder
+package com.aestasit.infrastructure.imgr.provisioner
 
-class UnsupportedBuilder {}
+class UnsupportedProvisioner {
+
+
+}

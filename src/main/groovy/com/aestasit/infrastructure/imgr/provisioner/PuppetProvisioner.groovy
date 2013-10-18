@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.PackerException
-import com.aestasit.infrastructure.model.Box
+import com.aestasit.infrastructure.imgr.ImgrException
+import com.aestasit.infrastructure.imgr.model.Box
 import groovy.util.logging.Slf4j
 
-import static com.aestasit.infrastructure.provisioner.PackageProvider.APT
-import static com.aestasit.infrastructure.provisioner.PackageProvider.YUM
+import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.APT
+import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.YUM
 
 @Slf4j
 class PuppetProvisioner extends BaseProvisioner {
@@ -61,7 +61,7 @@ class PuppetProvisioner extends BaseProvisioner {
         log.info('Unknown operating system. Assuming Yum is already setup!')
       }
     } else {
-      throw new PackerException('This operating system does not support Yum!')
+      throw new ImgrException('This operating system does not support Yum!')
     }
   }
 
@@ -93,7 +93,7 @@ class PuppetProvisioner extends BaseProvisioner {
           'puppet',
       ])
     } else {
-      throw new PackerException('Unknown operating system. Puppet will not be installed!')
+      throw new ImgrException('Unknown operating system. Puppet will not be installed!')
     }
     // Create empty hiera.yaml file to avoid warning upon puppet apply.
     session.exec("touch /etc/puppet/hiera.yaml")

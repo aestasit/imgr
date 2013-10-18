@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.builder
+package com.aestasit.infrastructure.imgr.builder
+
+import groovy.util.logging.Slf4j
 
 import com.aestasit.cloud.aws.EC2Client
-import com.aestasit.infrastructure.model.Box
-import groovy.util.logging.Slf4j
+import com.aestasit.infrastructure.imgr.model.Box
 
 @Slf4j
 class AmiBuilder {
@@ -49,17 +50,12 @@ class AmiBuilder {
     keyPairPath = conf.keypair_location // TODO This should go
     securityGroup = conf.security_group // TODO This should go
 
-    if (!accessKey) {
-      accessKey = System.getenv('AWS_ACCESS_KEY_ID')
-    }
-    if (!secretKey) {
-      secretKey = System.getenv('AWS_SECRET_ACCESS_KEY')
-    }
+    accessKey = accessKey ?: System.getenv('AWS_ACCESS_KEY_ID')
+    secretKey = secretKey ?: System.getenv('AWS_SECRET_ACCESS_KEY')
 
     if (!accessKey || !secretKey) {
-
       log.error 'accessKey or secretKey are null'
-      System.exit(0)
+      System.exit(1)
     }
 
     System.setProperty("aws.accessKeyId", accessKey)
@@ -76,14 +72,12 @@ class AmiBuilder {
         securityGroup,
         instanceType,
         true, -1, amiName)
-
     new Ec2Box(host: instance.host,
         port: 22,
         keyPath: keyPairPath,
         user: sshUsername,
         instanceId: instance.instanceId)
   }
-
 
   void createImage(Ec2Box box, name, description) {
     // TODO better error handling

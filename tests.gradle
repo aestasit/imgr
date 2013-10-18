@@ -1,0 +1,33 @@
+
+sourceSets {
+  integrationTest {
+    java { srcDir 'src/integration-test/groovy' }
+    resources { srcDir 'src/integration-test/resources' }
+    compileClasspath = sourceSets.main.output + configurations.integrationTest
+    runtimeClasspath = output + compileClasspath
+  }
+}
+
+dependencies {
+  testCompile 'junit:junit:4.11'
+  testRuntime 'ch.qos.logback:logback-classic:1.0.7'
+  integrationTestCompile 'junit:junit:4.11'
+  integrationTestRuntime 'ch.qos.logback:logback-classic:1.0.7'
+}
+
+
+task integrationTest(type: Test) {
+  testClassesDir = sourceSets.integrationTest.output.classesDir
+  classpath += sourceSets.integrationTest.runtimeClasspath
+}
+
+tasks.withType(Test) {
+  doFirst {
+    systemProperties = System.getProperties()
+    project.properties.each { key, value ->
+      if (key.startsWith("aws")) {
+        systemProperties[key] = value
+      }
+    }
+  }
+}

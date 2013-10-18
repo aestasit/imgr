@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure
+package com.aestasit.infrastructure.imgr
 
-import com.aestasit.infrastructure.builder.AmiBuilder
-import com.aestasit.infrastructure.builder.UnsupportedBuilder
-import com.aestasit.infrastructure.model.Box
-import com.aestasit.infrastructure.provisioner.PuppetProvisioner
-import com.aestasit.infrastructure.provisioner.ShellProvisioner
-import com.aestasit.infrastructure.provisioner.UnsupportedProvisioner
+import com.aestasit.infrastructure.imgr.builder.AmiBuilder
+import com.aestasit.infrastructure.imgr.builder.UnsupportedBuilder
+import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
+import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
+import com.aestasit.infrastructure.imgr.provisioner.UnsupportedProvisioner
+
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class Packer {
+class Imgr {
 
   void processConfiguration(InputStream f) {
 
     def config = new JsonSlurper().parse(f.newReader())
     validate(config)
 
-    def skipImage = config.skip_image=='true'?true:false
-
+    def skipImage = config.skip_image == 'true'
 
     def builder = getBuilder(config)
     def shinyBox = builder.startInstance()
@@ -45,7 +45,6 @@ class Packer {
         def provisioner = getProvisioner(id, config, shinyBox)
         provisioner.provision()
       }
-
     }
     log.info("provisioning completed")
 
@@ -53,8 +52,8 @@ class Packer {
       log.info("creating image now...")
       builder.createImage(shinyBox, 'name', 'description')
     }
+    
   }
-
 
   private boolean hasProvisioners(config) {
     config.provisioners != null
@@ -71,7 +70,6 @@ class Packer {
     conf.provisioners.each {
       println "Type of provisioner: ${it.type}"
     }
-
   }
 
   def getProvisioner(index, builderConfig, Box aBox) {
@@ -102,7 +100,7 @@ class Packer {
   }
 
   static main(args) {
-    def packer = new Packer()    
+    def packer = new Imgr()    
     if (args.length == 1) {
       log.debug "> processing ${args[0]}"
       def f = new File(args[0])

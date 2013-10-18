@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.provisioner
 
 import static org.junit.Assert.*
 import groovy.json.JsonSlurper
 
 import org.junit.*
 
-import com.aestasit.infrastructure.BaseTest
-import com.aestasit.infrastructure.model.*
+import com.aestasit.infrastructure.imgr.BaseTest
+import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
+import com.aestasit.infrastructure.imgr.model.*
 
 class ShellProvisionerTest extends BaseTest {
 

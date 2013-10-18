@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.model.Box
+import com.aestasit.infrastructure.imgr.model.Box
 import groovy.util.logging.Slf4j
 
 

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure
+package com.aestasit.infrastructure.imgr
 
-import com.aestasit.infrastructure.model.Box
-import com.aestasit.infrastructure.provisioner.PuppetProvisioner
+import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
 import groovy.json.JsonSlurper
 import org.junit.Ignore
 
 class PuppetProvisionerTest extends BaseTest {
-
 
   def config = """{
   "builders": [{
@@ -50,7 +49,6 @@ class PuppetProvisionerTest extends BaseTest {
   }]
   }
   """
-
 
   @Ignore
   void testConfig() {

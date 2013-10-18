@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.imgr'
-version = '0.1-SNAPSHOT'
+version = '0.2-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }
@@ -19,6 +19,7 @@ apply plugin: 'github-pages'
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
 apply from: 'docs.gradle'
+apply from: 'tests.gradle'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
@@ -48,18 +49,6 @@ dependencies {
   testRuntime 'ch.qos.logback:logback-core:1.0.7'
   testRuntime 'ch.qos.logback:logback-classic:1.0.7'
 }
-
-test.doFirst {
-  systemProperties = System.getProperties()
-  project.properties.each { key, value ->
-    if (key.startsWith("aws")) {
-      systemProperties[key] = value
-    }
-  }
-}
-
-// Test are only executed when launching gradle with -Drun.tests=true
-test.onlyIf { Boolean.getBoolean('run.tests') }
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.8'

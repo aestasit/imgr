@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure
+package com.aestasit.infrastructure.imgr
 
 import com.aestasit.cloud.aws.EC2Client
-import com.aestasit.infrastructure.builder.AmiBuilder
-import com.aestasit.infrastructure.builder.Ec2Box
-import com.aestasit.infrastructure.provisioner.PuppetProvisioner
-import com.aestasit.infrastructure.provisioner.ShellProvisioner
+import com.aestasit.infrastructure.imgr.builder.AmiBuilder
+import com.aestasit.infrastructure.imgr.builder.Ec2Box
+import com.aestasit.infrastructure.imgr.Imgr
+import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
+import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
+
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
@@ -103,7 +106,7 @@ class PackerTest extends BaseTest {
   @Ignore
   void testConfig() {
 
-    new Packer().processConfiguration(getConfig(config))
+    new Imgr().processConfiguration(getConfig(config))
     assertEquals(1, ec2.listInstances("packer-quick-start").size())
   }
 
@@ -112,7 +115,7 @@ class PackerTest extends BaseTest {
 
     def json = new JsonSlurper().parseText(config)
     json.put('skip_image', 'true')
-    new Packer().processConfiguration(getConfig(JsonOutput.toJson(json)))
+    new Imgr().processConfiguration(getConfig(JsonOutput.toJson(json)))
     assertEquals(1, ec2.listInstances("packer-quick-start").size())
   }
 
@@ -139,7 +142,7 @@ class PackerTest extends BaseTest {
       invocationCount++
     }
 
-    Packer p = new Packer()
+    Imgr p = new Imgr()
     p.processConfiguration(getConfig(config2))
     assertEquals(2, invocationCount)
 

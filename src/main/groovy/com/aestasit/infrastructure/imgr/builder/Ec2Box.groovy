@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.builder
 
-class UnsupportedProvisioner {
+import com.aestasit.infrastructure.imgr.model.Box
 
-
+class Ec2Box extends Box {
+  String instanceId
+  String getId() {
+    instanceId
+  }
 }

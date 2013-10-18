@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.provisioner
 
 enum PackageProvider {
   YUM, APT, GEM

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure
+package com.aestasit.infrastructure.imgr
 
 import static org.junit.Assert.*
 import groovy.time.TimeCategory

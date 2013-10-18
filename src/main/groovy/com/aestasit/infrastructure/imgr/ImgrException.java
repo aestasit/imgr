@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.model
+package com.aestasit.infrastructure.imgr;
 
-import groovy.transform.Canonical
+class ImgrException extends RuntimeException {
 
-@Canonical
-class PackageProvider {
+  private static final long serialVersionUID = 8034481481803093891L;
 
+  ImgrException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
+  ImgrException(String message) {
+    super(message);
+  }
 }

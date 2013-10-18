@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.provisioner
+package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.PackerException
+import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.ssh.SshOptions
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.SysOutLogger
@@ -56,7 +56,7 @@ class SshSession {
     if (fileFrom.exists()) {
       isDir = fileFrom.isDirectory()
     } else {
-      throw new PackerException("File does not exist: ${_from}")
+      throw new ImgrException("File does not exist: ${_from}")
     }
     engine.remoteSession {
       scp {
