@@ -15,11 +15,7 @@
  */
 
 package com.aestasit.infrastructure.imgr.provisioner
-import java.io.File;
-import java.util.Map;
-
-import groovy.transform.InheritConstructors
-import groovy.util.logging.Slf4j;
+import groovy.util.logging.Slf4j
 
 import com.aestasit.infrastructure.imgr.model.Box
 
@@ -30,8 +26,15 @@ import com.aestasit.infrastructure.imgr.model.Box
  *
  */
 @Slf4j
-@InheritConstructors
 class FileProvisioner extends BaseProvisioner {
+
+  FileProvisioner(Box box, Map provisionerConfig) {
+    super(box, provisionerConfig)
+  }
+
+  FileProvisioner(SshSession session, Map provisionerConfig) {
+    super(session, provisionerConfig)
+  }
 
   @Override
   public void provision() {

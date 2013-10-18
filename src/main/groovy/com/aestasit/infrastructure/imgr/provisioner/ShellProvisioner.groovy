@@ -16,9 +16,10 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.imgr.model.Box
+import java.util.Map;
 
-import groovy.transform.InheritConstructors;
+import com.aestasit.infrastructure.imgr.model.Box;
+
 import groovy.util.logging.Slf4j
 
 /**
@@ -28,8 +29,15 @@ import groovy.util.logging.Slf4j
  *
  */
 @Slf4j
-@InheritConstructors
 class ShellProvisioner extends BaseProvisioner {
+
+  ShellProvisioner(Box box, Map provisionerConfig) {
+    super(box, provisionerConfig)
+  }
+
+  ShellProvisioner(SshSession session, Map provisionerConfig) {
+    super(session, provisionerConfig)
+  }
 
   static String DEFAULT_UPLOAD_DIR = '/tmp'
   static String DEFAULT_SCRIPT_NAME = 'script.sh'

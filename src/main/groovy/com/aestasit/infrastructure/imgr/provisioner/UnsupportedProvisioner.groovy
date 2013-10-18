@@ -18,7 +18,7 @@ package com.aestasit.infrastructure.imgr.provisioner
 
 import java.util.Map;
 
-import com.aestasit.infrastructure.imgr.model.Box;
+import com.aestasit.infrastructure.imgr.model.Box
 
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Slf4j
@@ -30,16 +30,22 @@ import groovy.util.logging.Slf4j
  *
  */
 @Slf4j
-@InheritConstructors
 class UnsupportedProvisioner extends BaseProvisioner {
-  
+
   UnsupportedProvisioner() {
     super(null, [:])
   }
 
-  @Override
-  public void provision() {
-    log.error "Unsupported provisioner type!"    
+  UnsupportedProvisioner(Box box, Map provisionerConfig) {
+    super(box, provisionerConfig)
   }
 
+  UnsupportedProvisioner(SshSession session, Map provisionerConfig) {
+    super(session, provisionerConfig)
+  }
+
+  @Override
+  public void provision() {
+    log.error "Unsupported provisioner type!"
+  }
 }

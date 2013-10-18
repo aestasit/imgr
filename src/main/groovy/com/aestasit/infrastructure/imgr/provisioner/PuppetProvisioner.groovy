@@ -19,6 +19,8 @@ package com.aestasit.infrastructure.imgr.provisioner
 import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.APT
 import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.YUM
 
+import java.util.Map;
+
 import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.infrastructure.imgr.model.Box
 
@@ -33,8 +35,15 @@ import groovy.util.logging.Slf4j
  *
  */
 @Slf4j
-@InheritConstructors
 class PuppetProvisioner extends BaseProvisioner {
+
+  PuppetProvisioner(Box box, Map provisionerConfig) {
+    super(box, provisionerConfig)
+  }
+
+  PuppetProvisioner(SshSession session, Map provisionerConfig) {
+    super(session, provisionerConfig)
+  }
 
   @Override
   void provision() {
@@ -84,22 +93,22 @@ class PuppetProvisioner extends BaseProvisioner {
     if (isRedHat() || isAmazonLinux() || isCentOS()) {
       log.debug 'installing puppet for RH,AL,COS'
       installPackages(YUM, [
-          'libselinux',
-          'libselinux-ruby',
-          'facter',
-          'puppet',
+        'libselinux',
+        'libselinux-ruby',
+        'facter',
+        'puppet',
       ])
     } else if (isDebian()) {
       log.debug 'installing puppet for DB'
 
       installPackages(APT, [
-          'facter',
-          'puppet',
+        'facter',
+        'puppet',
       ])
     } else {
       throw new ImgrException('Unknown operating system. Puppet will not be installed!')
     }
-    
+
     // Create empty hiera.yaml file to avoid warning upon puppet apply.
     session.exec("touch /etc/puppet/hiera.yaml")
 
@@ -113,7 +122,7 @@ class PuppetProvisioner extends BaseProvisioner {
 
     def manifestFile = new File(provisionerConfig.manifest_file).name
     log.debug "Manifest file is $manifestFile"
-    
+
     log.info '> Uploading new Puppet manifest'
     session.scp(provisionerConfig.manifest_file, provisionerConfig.staging_directory)
 
