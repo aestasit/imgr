@@ -16,15 +16,40 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.imgr.ImgrException
-import groovy.util.logging.Slf4j
-
 import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.*
 
+import com.aestasit.infrastructure.imgr.ImgrException
+import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.ssh.dsl.SessionDelegate
+
+import groovy.util.logging.Slf4j
+
+/**
+ * This is base provisioner class that holds common functionality for all other provisioners.
+ * 
+ * @author Aestas/IT
+ *
+ */
 @Slf4j
 abstract class BaseProvisioner {
 
-  def session
+  public static CR = String.valueOf(Character.toChars(0x0D))
+  public static LF = String.valueOf(Character.toChars(0x0A))
+
+  protected SshSession session
+  protected Map provisionerConfig
+
+  BaseProvisioner(SshSession session, Map provisionerConfig) {
+    super()
+    this.session = session
+    this.provisionerConfig = provisionerConfig
+  }
+
+  BaseProvisioner(Box box, Map provisionerConfig) {
+    this(new SshSession(box.host, config.user, box.keyPath), provisionerConfig)
+  }
+
+  abstract void provision()
 
   def boolean fileExists(String file) {
     check("test -f $file")
@@ -145,14 +170,11 @@ abstract class BaseProvisioner {
     session.exec(command: command, showCommand: false, showOutput: false, failOnError: false).exitStatus == exitCode
   }
 
-  abstract void provision()
-
   protected String readResourceFile(String filename) {
-
     def stream = BaseProvisioner.class.getResourceAsStream(filename)
-    if (stream) return stream.text
-    throw new ImgrException("$filename not found in resources folder")
-
+    if (!stream) {
+      throw new ImgrException("$filename not found in resources folder")
+    }
+    stream.text
   }
-
 }

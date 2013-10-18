@@ -16,34 +16,34 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.imgr.ImgrException
-import com.aestasit.infrastructure.imgr.model.Box
-import groovy.util.logging.Slf4j
-
 import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.APT
 import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.YUM
 
+import com.aestasit.infrastructure.imgr.ImgrException
+import com.aestasit.infrastructure.imgr.model.Box
+
+import groovy.transform.InheritConstructors
+import groovy.util.logging.Slf4j
+
+
+/**
+ * Puppet-based provisioner that is capable of installing Puppet and applying custom manifests.
+ *
+ * @author Aestas/IT
+ *
+ */
 @Slf4j
+@InheritConstructors
 class PuppetProvisioner extends BaseProvisioner {
-
-  def provisionerConf
-
-  def PuppetProvisioner(Box aBox, config) {
-    // Create a running SSH session
-    session = new SshSession(aBox.host, aBox.user, aBox.keyPath)
-    provisionerConf = config
-  }
 
   @Override
   void provision() {
-
     log.info '> installing Puppet: updating repository on remote machine...'
     updateRepos()
     log.info '> installing Puppet...'
     install()
     log.info '> applying Puppet configuration...'
-    applyManifest(provisionerConf)
-
+    applyManifest(provisionerConfig)
   }
 
 
@@ -66,7 +66,7 @@ class PuppetProvisioner extends BaseProvisioner {
   }
 
   /**
-   * Install
+   * Install Puppet.
    */
   private void install() {
 
@@ -115,7 +115,6 @@ class PuppetProvisioner extends BaseProvisioner {
     session.exec "sudo /usr/bin/puppet apply -v ${provisionerConf.staging_directory}/${manifestFile}"
 
   }
-
 
   private puppetRepo() {
     session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo',

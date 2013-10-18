@@ -29,32 +29,32 @@ class AmiBuilder {
   String amiName
   String instanceType
   String sourceAmi
-  String sshUsername
   String amiRegion
-  String keyPairName // TODO this should gp
+
+  String keyPairName // TODO this should go
   String keyPairPath // TODO This should go
   String securityGroup // TODO This should go
+  
   def ec2
 
-  AmiBuilder(conf) {
+  AmiBuilder(config) {
 
-    accessKey = conf.access_key
-    secretKey = conf.secret_key
-    amiName = conf.ami_name
-    instanceType = conf.instance_type
-    sshUsername = conf.ssh_username
-    sourceAmi = conf.source_ami
-    amiRegion = conf.region
+    accessKey = config.access_key
+    secretKey = config.secret_key
+    amiName = config.ami_name
+    instanceType = config.instance_type
+    sourceAmi = config.source_ami
+    amiRegion = config.region
 
-    keyPairName = conf.keypair // TODO This should go
-    keyPairPath = conf.keypair_location // TODO This should go
-    securityGroup = conf.security_group // TODO This should go
+    keyPairName = config.keypair // TODO This should go
+    keyPairPath = config.keypair_location // TODO This should go
+    securityGroup = config.security_group // TODO This should go
 
     accessKey = accessKey ?: System.getenv('AWS_ACCESS_KEY_ID')
     secretKey = secretKey ?: System.getenv('AWS_SECRET_ACCESS_KEY')
 
     if (!accessKey || !secretKey) {
-      log.error 'accessKey or secretKey are null'
+      log.error 'Either "accessKey" or "secretKey" is null! They are required to make Amazon AWS connection.'
       System.exit(1)
     }
 
@@ -67,16 +67,18 @@ class AmiBuilder {
 
   Box startInstance() {
     log.info 'Launching a source AWS instance...'
-    def instance = ec2.startInstance(keyPairName,
+    def instance = ec2.startInstance(
+        keyPairName,
         sourceAmi,
         securityGroup,
         instanceType,
         true, -1, amiName)
-    new Ec2Box(host: instance.host,
+    new Ec2Box(
+        host: instance.host,
         port: 22,
         keyPath: keyPairPath,
-        user: sshUsername,
-        instanceId: instance.instanceId)
+        instanceId: instance.instanceId
+        )
   }
 
   void createImage(Ec2Box box, name, description) {

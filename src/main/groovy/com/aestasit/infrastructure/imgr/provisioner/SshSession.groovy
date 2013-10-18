@@ -22,6 +22,13 @@ import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.SysOutLogger
 import groovy.util.logging.Slf4j
 
+/**
+ *
+ *
+ *
+ * @author Aestas/IT
+ *
+ */
 @Slf4j
 class SshSession {
 
@@ -30,42 +37,38 @@ class SshSession {
   SshSession(String host, String user, String pathToKey) {
     def options = new SshOptions()
     options.with {
-
       logger = new SysOutLogger()
       defaultHost = host
       defaultUser = user
-      //defaultPassword = '123456'
-      //defaultPort = aBox.port
       defaultKeyFile = new File(pathToKey)
       reuseConnection = true
       trustUnknownHosts = true
-
       verbose = true
     }
     engine = new SshDslEngine(options)
-
   }
 
   /**
-   * upload a file or folder to a remote folder
+   * Upload a file or folder to a remote folder.
+   * 
    */
-  def scp(String _from, String _to) {
+  def scp(String source, String target) {
     def res
-    def fileFrom = new File(_from)
+    def fileFrom = new File(source)
     boolean isDir = false
     if (fileFrom.exists()) {
       isDir = fileFrom.isDirectory()
     } else {
-      throw new ImgrException("File does not exist: ${_from}")
+      throw new ImgrException("File does not exist: ${source}")
     }
     engine.remoteSession {
       scp {
         if (isDir) {
-          from { localDir _from }
+          from { localDir source }
         } else {
-          from { localFile _from }
+          from { localFile source }
         }
-        into { remoteDir _to }
+        into { remoteDir target }
       }
     }
     res
@@ -91,8 +94,6 @@ class SshSession {
       }
     }
     res
-
-
   }
 
   def uploadTxtAsRoot(String remoteFileLocation, String fileContent) {
@@ -103,8 +104,6 @@ class SshSession {
       }
     }
     res
-
-
   }
 
   def remoteFile(String _remoteFile, String content) {

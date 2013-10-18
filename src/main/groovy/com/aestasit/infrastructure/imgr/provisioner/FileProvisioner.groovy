@@ -15,13 +15,26 @@
  */
 
 package com.aestasit.infrastructure.imgr.provisioner
+import java.io.File;
+
+import groovy.transform.InheritConstructors
+import groovy.util.logging.Slf4j;
+
+import com.aestasit.infrastructure.imgr.model.Box
 
 /**
- * Enumeration of different Linux package managers.
+ * File provisioner allows copying local files to remote instances. 
  *
  * @author Aestas/IT
  *
  */
-enum PackageProvider {
-  YUM, APT, GEM
+@Slf4j
+@InheritConstructors
+class FileProvisioner extends BaseProvisioner {
+
+  @Override
+  public void provision() {
+    session.scp(new File(provisionerConfig.source_path), provisionerConfig.target_path)
+  }
+  
 }

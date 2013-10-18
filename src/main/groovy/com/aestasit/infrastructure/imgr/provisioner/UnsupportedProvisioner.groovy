@@ -16,7 +16,30 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-class UnsupportedProvisioner {
+import java.util.Map;
 
+import com.aestasit.infrastructure.imgr.model.Box;
+
+import groovy.transform.InheritConstructors
+import groovy.util.logging.Slf4j
+
+/**
+ * Provisioner class that does nothing except showing an error message. 
+ *
+ * @author Aestas/IT
+ *
+ */
+@Slf4j
+@InheritConstructors
+class UnsupportedProvisioner extends BaseProvisioner {
+  
+  UnsupportedProvisioner() {
+    super(null, [:])
+  }
+
+  @Override
+  public void provision() {
+    log.error "Unsupported provisioner type!"    
+  }
 
 }

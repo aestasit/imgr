@@ -16,22 +16,43 @@
 
 package com.aestasit.infrastructure.imgr
 
+import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
+
 import com.aestasit.infrastructure.imgr.builder.AmiBuilder
 import com.aestasit.infrastructure.imgr.builder.UnsupportedBuilder
 import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.provisioner.FileProvisioner
 import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
 import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
 import com.aestasit.infrastructure.imgr.provisioner.UnsupportedProvisioner
 
-import groovy.json.JsonSlurper
-import groovy.util.logging.Slf4j
-
 @Slf4j
 class Imgr {
 
-  void processConfiguration(InputStream f) {
+  static main(args) {
+    def imgr = new Imgr()
+    if (args.length == 1) {
+      imgr.processConfiguration(args[0])
+    } else {
+      println "Usage: imgr <configuration.json>"
+      System.exit(1)
+    }
+  }
 
-    def config = new JsonSlurper().parse(f.newReader())
+  void processConfiguration(String fileName) {
+    def file = new File(fileName)
+    log.debug "> opening $fileName"
+    if (file.exists() && file.isFile()) {
+      file.withReader { reader ->
+        processConfiguration(reader)
+      }
+    }
+  }
+  
+  void processConfiguration(Reader reader) {
+
+    def config = new JsonSlurper().parse(reader)
     validate(config)
 
     def skipImage = config.skip_image == 'true'
@@ -56,24 +77,23 @@ class Imgr {
   }
 
   private boolean hasProvisioners(config) {
-    config.provisioners != null
+    config.'provisioners' != null
   }
 
-  void validate(conf) {
+  void validate(config) {
     // TODO implement validation
     println '> validation not implemented'
-    println "Number of builders: ${conf.builders.size}"
-    println "Number of provisioners: ${conf.provisioners?.size}"
-    conf.builders.each {
+    println "Number of builders: ${config.builders.size}"
+    println "Number of provisioners: ${config.provisioners?.size}"
+    config.builders.each {
       println "Type of builder: ${it.type}"
     }
-    conf.provisioners.each {
+    config.provisioners.each {
       println "Type of provisioner: ${it.type}"
     }
   }
 
   def getProvisioner(index, builderConfig, Box aBox) {
-
     def provisioner
     switch (builderConfig.provisioners[index].type) {
       case 'puppet-masterless':
@@ -82,10 +102,12 @@ class Imgr {
       case 'shell':
         provisioner = new ShellProvisioner(aBox, builderConfig.provisioners[index] )
         break
+      case 'file':
+        provisioner = new FileProvisioner(aBox, builderConfig.provisioners[index] )
+        break
       default:
         provisioner = new UnsupportedProvisioner()
     }
-
   }
 
   def getBuilder(builderConfig) {
@@ -96,17 +118,6 @@ class Imgr {
         break
       default:
         builder = new UnsupportedBuilder()
-    }
-  }
-
-  static main(args) {
-    def packer = new Imgr()    
-    if (args.length == 1) {
-      log.debug "> processing ${args[0]}"
-      def f = new File(args[0])
-      if (f.exists() && f.isFile()) {
-        packer.processConfiguration(f.newInputStream())
-      }
     }
   }
 
