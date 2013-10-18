@@ -8,7 +8,6 @@ buildscript {
   dependencies { classpath 'org.ajoberstar:gradle-git:0.6.3' }
 }
 
-apply plugin: 'application'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
@@ -20,11 +19,10 @@ apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
 apply from: 'docs.gradle'
 apply from: 'tests.gradle'
+apply from: 'app.gradle'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
-
-mainClassName = "com.aestasit.infrastructure.Packer"
 
 repositories {
   mavenCentral()

@@ -1,0 +1,4 @@
+
+apply plugin: 'application'
+
+mainClassName = "com.aestasit.infrastructure.imgr.Imgr"
