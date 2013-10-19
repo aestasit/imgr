@@ -16,10 +16,13 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.*
+import static com.aestasit.infrastructure.imgr.model.PackageProvider.*
 
+import com.aestasit.infrastructure.imgr.BaseComponent;
 import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.model.PackageProvider;
+import com.aestasit.infrastructure.imgr.transport.SshSession;
 import com.aestasit.ssh.dsl.SessionDelegate
 
 import groovy.util.logging.Slf4j
@@ -31,10 +34,7 @@ import groovy.util.logging.Slf4j
  *
  */
 @Slf4j
-abstract class BaseProvisioner {
-
-  public static CR = String.valueOf(Character.toChars(0x0D))
-  public static LF = String.valueOf(Character.toChars(0x0A))
+abstract class BaseProvisioner extends BaseComponent {
 
   protected SshSession session
   protected Map provisionerConfig

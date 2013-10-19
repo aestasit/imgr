@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.builder
+package com.aestasit.infrastructure.imgr.transport
+
+import groovy.util.logging.Slf4j
 
 /**
+ *
+ *
  * @author Aestas/IT
  *
  */
-class UnsupportedBuilder extends BaseBuilder {
-  
-  
+@Slf4j
+class RdpSession {
+
+
 }

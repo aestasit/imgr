@@ -16,10 +16,12 @@
 
 package com.aestasit.infrastructure.imgr.model
 
-import groovy.transform.Canonical
-
-@Canonical
-class PackageProvider {
-
-
+/**
+ * Enumeration of different Linux package managers.
+ *
+ * @author Aestas/IT
+ *
+ */
+enum PackageProvider {
+  YUM, APT, GEM
 }

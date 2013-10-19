@@ -25,6 +25,10 @@ import com.aestasit.infrastructure.imgr.BaseTest
 import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
 import com.aestasit.infrastructure.imgr.model.*
 
+/**
+ * @author Aestas/IT
+ *
+ */
 class ShellProvisionerTest extends BaseTest {
 
   def config = """{

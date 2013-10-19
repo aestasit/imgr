@@ -29,8 +29,6 @@ class BaseTest {
   protected static String DEFAULT_REGION = ''
   protected static String SECURITY_GROUP = ''
 
-
-
   @BeforeClass
   public static void setUp() {
     AWS_ACCESS_KEY_ID = readProperty('awsAccessKeyId')
@@ -39,9 +37,7 @@ class BaseTest {
     KEY_LOCATION = readProperty('awsDefaultKeyFile')
     DEFAULT_REGION = readProperty('awsDefaultRegion', 'eu-west-1')
     SECURITY_GROUP = readProperty('awsDefaultSecurityGroup')
-
   }
-
 
   private static String readProperty(String key) {
     String value = System.getProperty(key)

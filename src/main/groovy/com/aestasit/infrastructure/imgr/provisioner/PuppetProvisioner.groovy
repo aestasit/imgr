@@ -16,16 +16,14 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.APT
-import static com.aestasit.infrastructure.imgr.provisioner.PackageProvider.YUM
+import static com.aestasit.infrastructure.imgr.model.PackageProvider.APT
+import static com.aestasit.infrastructure.imgr.model.PackageProvider.YUM
 
-import java.util.Map;
+import groovy.util.logging.Slf4j
 
 import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.infrastructure.imgr.model.Box
-
-import groovy.transform.InheritConstructors
-import groovy.util.logging.Slf4j
+import com.aestasit.infrastructure.imgr.transport.SshSession
 
 
 /**
@@ -46,13 +44,10 @@ class PuppetProvisioner extends BaseProvisioner {
   }
 
   @Override
-  void provision() {
-    log.info '> installing Puppet: updating repository on remote machine...'
-    updateRepos()
-    log.info '> installing Puppet...'
-    install()
-    log.info '> applying Puppet configuration...'
-    applyManifest(provisionerConfig)
+  void provision() {    
+    updateRepos()    
+    installPuppet()    
+    applyManifest()
   }
 
   /**
@@ -60,6 +55,7 @@ class PuppetProvisioner extends BaseProvisioner {
    * 
    */
   private void updateRepos() {
+    log.info '> Installing Puppet: updating repository on remote machine...'
     if (isYumAvailable()) {
       if (isRedHat()) {
         puppetRepo()
@@ -81,8 +77,10 @@ class PuppetProvisioner extends BaseProvisioner {
    * Install Puppet.
    * 
    */
-  private void install() {
-
+  private void installPuppet() {
+    
+    log.info '> Installing Puppet...'
+    
     if (isAmazonLinux()) {
       // NOTE: Workaround for missing virt-what package in Amazon Linux repositories
       if (!isYumPackageInstalled('virt-what')) {
@@ -91,7 +89,7 @@ class PuppetProvisioner extends BaseProvisioner {
     }
 
     if (isRedHat() || isAmazonLinux() || isCentOS()) {
-      log.debug 'installing puppet for RH,AL,COS'
+      log.debug '> Installing Puppet for RedHat-like OS'
       installPackages(YUM, [
         'libselinux',
         'libselinux-ruby',
@@ -99,8 +97,7 @@ class PuppetProvisioner extends BaseProvisioner {
         'puppet',
       ])
     } else if (isDebian()) {
-      log.debug 'installing puppet for DB'
-
+      log.debug '> Installing Puppet for Debian-like OS'
       installPackages(APT, [
         'facter',
         'puppet',
@@ -120,6 +117,8 @@ class PuppetProvisioner extends BaseProvisioner {
    */
   private void applyManifest() {
 
+    log.info '> Applying Puppet configuration...'
+    
     def manifestFile = new File(provisionerConfig.manifest_file).name
     log.debug "Manifest file is $manifestFile"
 

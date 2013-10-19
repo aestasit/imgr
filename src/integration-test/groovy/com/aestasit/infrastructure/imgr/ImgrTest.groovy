@@ -18,8 +18,8 @@ package com.aestasit.infrastructure.imgr
 
 import com.aestasit.cloud.aws.EC2Client
 import com.aestasit.infrastructure.imgr.builder.AmiBuilder
-import com.aestasit.infrastructure.imgr.builder.Ec2Box
 import com.aestasit.infrastructure.imgr.Imgr
+import com.aestasit.infrastructure.imgr.model.Ec2Box;
 import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
 import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
 
@@ -33,7 +33,11 @@ import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 
-class PackerTest extends BaseTest {
+/**
+ * @author Aestas/IT
+ *
+ */
+class ImgrTest extends BaseTest {
 
   def config = """{
   "builders": [{

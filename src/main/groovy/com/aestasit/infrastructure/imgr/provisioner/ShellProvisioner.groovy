@@ -16,11 +16,10 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import java.util.Map;
-
-import com.aestasit.infrastructure.imgr.model.Box;
-
 import groovy.util.logging.Slf4j
+
+import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.transport.SshSession
 
 /**
  * 
@@ -63,7 +62,7 @@ class ShellProvisioner extends BaseProvisioner {
   }
 
   private executeScript(String script = DEFAULT_SCRIPT_NAME) {
-    session.exec("chmod +x $DEFAULT_UPLOAD_DIR/$script; $DEFAULT_UPLOAD_DIR/$script")
+    session.exec("chmod +x $DEFAULT_UPLOAD_DIR/$script; $DEFAULT_UPLOAD_DIR/$script ${provisionerConfig.arguments ?: ''}" )
   }
 
   private File createFile(List lines) {

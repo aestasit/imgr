@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.provisioner
+package com.aestasit.infrastructure.imgr.builder
+
+import com.aestasit.infrastructure.imgr.BaseComponent
 
 /**
- * Enumeration of different Linux package managers.
- *
  * @author Aestas/IT
  *
  */
-enum PackageProvider {
-  YUM, APT, GEM
+abstract class BaseBuilder extends BaseComponent {
+
 }

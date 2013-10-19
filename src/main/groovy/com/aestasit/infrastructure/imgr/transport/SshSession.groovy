@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.provisioner
+package com.aestasit.infrastructure.imgr.transport
 
 import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.ssh.SshOptions

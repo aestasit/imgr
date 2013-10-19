@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.builder
+package com.aestasit.infrastructure.imgr
 
-import com.aestasit.infrastructure.imgr.model.Box
+/**
+ * Base Imgr component (builder, provisioner etc.) functionality.
+ * 
+ * @author Aestas/IT
+ *
+ */
+abstract class BaseComponent {
 
-class Ec2Box extends Box {
-  String instanceId
-  String getId() {
-    instanceId
+  public static CR = String.valueOf(Character.toChars(0x0D))
+  public static LF = String.valueOf(Character.toChars(0x0A))
+  
+  def validate() {
+    
   }
+  
 }

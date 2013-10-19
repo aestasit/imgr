@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.builder
+package com.aestasit.infrastructure.imgr.model
 
-/**
- * @author Aestas/IT
- *
- */
-class UnsupportedBuilder extends BaseBuilder {
-  
-  
+
+class Ec2Box extends Box {
+  String instanceId
+  String getId() {
+    instanceId
+  }
 }

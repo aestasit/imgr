@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr
+package com.aestasit.infrastructure.imgr.provisioner
 
+import com.aestasit.infrastructure.imgr.BaseTest;
 import com.aestasit.infrastructure.imgr.model.Box
 import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
 import groovy.json.JsonSlurper
 import org.junit.Ignore
 
+/**
+ * @author Aestas/IT
+ *
+ */
 class PuppetProvisionerTest extends BaseTest {
 
   def config = """{

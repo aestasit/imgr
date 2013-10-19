@@ -20,9 +20,14 @@ import groovy.util.logging.Slf4j
 
 import com.aestasit.cloud.aws.EC2Client
 import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.model.Ec2Box;
 
+/**
+ * @author Aestas/IT
+ *
+ */
 @Slf4j
-class AmiBuilder {
+class AmiBuilder extends BaseBuilder {
 
   String accessKey
   String secretKey

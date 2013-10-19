@@ -16,12 +16,10 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import java.util.Map;
+import groovy.util.logging.Slf4j
 
 import com.aestasit.infrastructure.imgr.model.Box
-
-import groovy.transform.InheritConstructors
-import groovy.util.logging.Slf4j
+import com.aestasit.infrastructure.imgr.transport.SshSession
 
 /**
  * Provisioner class that does nothing except showing an error message. 

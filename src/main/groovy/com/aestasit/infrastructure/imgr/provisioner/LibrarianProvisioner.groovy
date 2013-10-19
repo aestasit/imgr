@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.builder
+package com.aestasit.infrastructure.imgr.provisioner
 
 /**
+ * Puppet Librarian based provisioner.
+ *
  * @author Aestas/IT
  *
  */
-class UnsupportedBuilder extends BaseBuilder {
-  
-  
+class LibrarianProvisioner extends BaseProvisioner {
+
+  @Override
+  public void provision() {
+    // TODO implement
+  }
+
 }
