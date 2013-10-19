@@ -25,7 +25,6 @@ import groovy.util.logging.Slf4j
 /**
  *
  *
- *
  * @author Aestas/IT
  *
  */
@@ -37,13 +36,13 @@ class SshSession {
   SshSession(String host, String user, String pathToKey) {
     def options = new SshOptions()
     options.with {
-      logger = new SysOutLogger()
-      defaultHost = host
-      defaultUser = user
-      defaultKeyFile = new File(pathToKey)
-      reuseConnection = true
+      logger            = new SysOutLogger()
+      defaultHost       = host
+      defaultUser       = user
+      defaultKeyFile    = new File(pathToKey)
+      reuseConnection   = false
       trustUnknownHosts = true
-      verbose = true
+      verbose           = true
     }
     engine = new SshDslEngine(options)
   }
