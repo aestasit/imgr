@@ -31,7 +31,7 @@ import com.aestasit.infrastructure.imgr.transport.SshSession
 class UnsupportedProvisioner extends BaseProvisioner {
 
   UnsupportedProvisioner() {
-    super(null, [:])
+    super((SshSession) null, [:])
   }
 
   UnsupportedProvisioner(Box box, Map provisionerConfig) {
