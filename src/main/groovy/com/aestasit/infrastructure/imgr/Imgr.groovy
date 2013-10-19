@@ -74,6 +74,8 @@ class Imgr {
       builder.createImage(shinyBox, 'name', 'description')
     }
     
+    // TODO: Terminate instance
+    
   }
 
   private boolean hasProvisioners(config) {
