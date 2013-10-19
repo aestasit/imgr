@@ -17,15 +17,15 @@
 package com.aestasit.infrastructure.imgr.provisioner
 
 import static com.aestasit.infrastructure.imgr.model.PackageProvider.*
+import groovy.text.SimpleTemplateEngine
+import groovy.text.Template
+import groovy.util.logging.Slf4j
 
-import com.aestasit.infrastructure.imgr.BaseComponent;
+import com.aestasit.infrastructure.imgr.BaseComponent
 import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.infrastructure.imgr.model.Box
-import com.aestasit.infrastructure.imgr.model.PackageProvider;
-import com.aestasit.infrastructure.imgr.transport.SshSession;
-import com.aestasit.ssh.dsl.SessionDelegate
-
-import groovy.util.logging.Slf4j
+import com.aestasit.infrastructure.imgr.model.PackageProvider
+import com.aestasit.infrastructure.imgr.transport.SshSession
 
 /**
  * This is base provisioner class that holds common functionality for all other provisioners.
@@ -52,7 +52,7 @@ abstract class BaseProvisioner extends BaseComponent {
   abstract void provision()
 
   def boolean fileExists(String file) {
-    check("test -f $file")
+    check("${provisionerConfig.command_prefix ?: ''} test -f $file")
   }
 
   def boolean isRedHat() {
@@ -116,7 +116,7 @@ abstract class BaseProvisioner extends BaseComponent {
   }
 
   def installYumPackage(String name) {
-    def cmd = "yum --assumeyes install $name"
+    def cmd = "${provisionerConfig.command_prefix ?: ''} yum --assumeyes install $name"
     if (isYumAvailable()) {
       if (isYumPackageInstalled(name)) {
         log.info("Package is already installed: $name")
@@ -135,7 +135,7 @@ abstract class BaseProvisioner extends BaseComponent {
         log.info("Package is already installed: $name")
       } else {
         log.info("Installing: $name")
-        session.exec("sudo apt-get -y install $name")
+        session.exec("${provisionerConfig.command_prefix ?: ''} apt-get -y install $name")
       }
     } else {
       throw new ImgrException("apt-get is not available on this system!")
@@ -148,7 +148,7 @@ abstract class BaseProvisioner extends BaseComponent {
         log.info("Package is already installed: $name")
       } else {
         log.info("Installing: $name")
-        session.exec("gem install $name")
+        session.exec("${provisionerConfig.command_prefix ?: ''} gem install $name")
       }
     } else {
       throw new ImgrException("gem is not available on this system!")
@@ -167,14 +167,28 @@ abstract class BaseProvisioner extends BaseComponent {
   }
 
   protected boolean check(String command, int exitCode = 0) {
-    session.exec(command: command, showCommand: false, showOutput: false, failOnError: false).exitStatus == exitCode
+    session.exec(
+      command: command, 
+      prefix: provisionerConfig.command_prefix ?: '', 
+      showCommand: false, 
+      showOutput: false, 
+      failOnError: false
+    ).exitStatus == exitCode
   }
 
   protected String readResourceFile(String filename) {
-    def stream = BaseProvisioner.class.getResourceAsStream(filename)
+    InputStream stream = BaseProvisioner.class.getResourceAsStream(filename)
     if (!stream) {
       throw new ImgrException("$filename not found in resources folder")
     }
     stream.text
   }
+
+  protected String readResourceTemplate(String filename, Map binding) {
+    String templateText = readResourceFile(filename)
+    SimpleTemplateEngine engine = new SimpleTemplateEngine()
+    Template template = engine.createTemplate(templateText)
+    template.make(binding)
+  }
+  
 }

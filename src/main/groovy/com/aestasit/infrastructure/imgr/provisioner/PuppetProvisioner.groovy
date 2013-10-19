@@ -18,7 +18,7 @@ package com.aestasit.infrastructure.imgr.provisioner
 
 import static com.aestasit.infrastructure.imgr.model.PackageProvider.APT
 import static com.aestasit.infrastructure.imgr.model.PackageProvider.YUM
-
+import groovy.text.SimpleTemplateEngine
 import groovy.util.logging.Slf4j
 
 import com.aestasit.infrastructure.imgr.ImgrException
@@ -62,7 +62,6 @@ class PuppetProvisioner extends BaseProvisioner {
         epelRepo()
       } else if (isAmazonLinux()) {
         puppetRepo()
-        centosRepo()
       } else if (isCentOS()) {
         puppetRepo()
       } else {
@@ -81,26 +80,19 @@ class PuppetProvisioner extends BaseProvisioner {
     
     log.info '> Installing Puppet...'
     
-    if (isAmazonLinux()) {
-      // NOTE: Workaround for missing virt-what package in Amazon Linux repositories
-      if (!isYumPackageInstalled('virt-what')) {
-        session.exec("yum --enablerepo=centos-base --assumeyes install virt-what")
-      }
-    }
-
     if (isRedHat() || isAmazonLinux() || isCentOS()) {
       log.debug '> Installing Puppet for RedHat-like OS'
       installPackages(YUM, [
         'libselinux',
         'libselinux-ruby',
-        'facter',
-        'puppet',
+        "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
+        "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
       ])
     } else if (isDebian()) {
       log.debug '> Installing Puppet for Debian-like OS'
       installPackages(APT, [
-        'facter',
-        'puppet',
+        "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
+        "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
       ])
     } else {
       throw new ImgrException('Unknown operating system. Puppet will not be installed!')
@@ -123,24 +115,33 @@ class PuppetProvisioner extends BaseProvisioner {
     log.debug "Manifest file is $manifestFile"
 
     log.info '> Uploading new Puppet manifest'
-    session.scp(provisionerConfig.manifest_file, provisionerConfig.staging_directory)
+    session.scp provisionerConfig.manifest_file, provisionerConfig.staging_directory
 
     // Apply default manifest.
     log.info '> Applying Puppet configuration'
-    session.exec "sudo /usr/bin/puppet apply -v ${provisionerConfig.staging_directory}/${manifestFile}"
+    session.exec "${provisionerConfig.command_prefix ?: ''} /usr/bin/puppet apply -v ${provisionerConfig.staging_directory}/${manifestFile}"
 
   }
 
-  private puppetRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/puppet.repo', readResourceFile('/repos/puppet.repo'))
+  private puppetRepo() {    
+    session.uploadTxtAsRoot(
+      '/etc/yum.repos.d/puppet.repo', 
+      readResourceTemplate(
+        '/repos/puppet.repo', 
+        basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/',
+        basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/'
+        )
+      )
   }
-
+  
   private epelRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/epel.repo', readResourceFile('/repos/epel.repo'))
-  }
-
-  private centosRepo() {
-    session.uploadTxtAsRoot('/etc/yum.repos.d/centos.repo', readResourceFile('/repos/centos.repo'))
+    session.uploadTxtAsRoot(
+      '/etc/yum.repos.d/epel.repo', 
+      readResourceTemplate(
+        '/repos/epel.repo', 
+        baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
+        )
+      )
   }
 
 }

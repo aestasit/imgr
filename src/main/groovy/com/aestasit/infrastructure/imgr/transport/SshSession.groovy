@@ -98,6 +98,7 @@ class SshSession {
 
   def uploadTxtAsRoot(String remoteFileLocation, String fileContent) {
     def res
+    // TODO: Remove this
     engine.remoteSession {
       prefix("sudo") {
         res = exec "echo '$fileContent' | sudo tee $remoteFileLocation"

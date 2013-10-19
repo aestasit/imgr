@@ -1,6 +1,0 @@
-[centos-base]
-name=CentOS Base Repository
-baseurl=http://mirror.centos.org/centos/6/os/$basearch
-failovermethod=priority
-enabled=0
-gpgcheck=0

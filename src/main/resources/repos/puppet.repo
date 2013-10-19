@@ -1,11 +1,11 @@
 [puppet]
 name=Puppet Labs Packages
-baseurl=http://yum.puppetlabs.com/el/$releasever/products/$basearch/
+baseurl=${basePuppetRepoUrl}
 enabled=1
 gpgcheck=0
 
 [puppet-deps]
 name=Puppet Dependencies
-baseurl=http://yum.puppetlabs.com/el/6/dependencies/$basearch/
+baseurl=${basePuppetDepsRepoUrl}
 enabled=1
 gpgcheck=0
