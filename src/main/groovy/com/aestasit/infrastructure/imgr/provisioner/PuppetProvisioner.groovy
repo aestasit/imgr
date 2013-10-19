@@ -128,20 +128,24 @@ class PuppetProvisioner extends BaseProvisioner {
       '/etc/yum.repos.d/puppet.repo', 
       readResourceTemplate(
         '/repos/puppet.repo', 
-        basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/',
-        basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/'
-        )
+        [ 
+          basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/',
+          basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/'
+        ]
       )
+    )
   }
   
   private epelRepo() {
     session.uploadTxtAsRoot(
       '/etc/yum.repos.d/epel.repo', 
       readResourceTemplate(
-        '/repos/epel.repo', 
-        baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
-        )
+        '/repos/epel.repo',
+        [ 
+          baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
+        ]
       )
+    )
   }
 
 }
