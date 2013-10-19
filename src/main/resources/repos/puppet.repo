@@ -3,9 +3,11 @@ name=Puppet Labs Packages
 baseurl=${basePuppetRepoUrl}
 enabled=1
 gpgcheck=0
+priority=1
 
 [puppet-deps]
 name=Puppet Dependencies
 baseurl=${basePuppetDepsRepoUrl}
 enabled=1
 gpgcheck=0
+priority=1

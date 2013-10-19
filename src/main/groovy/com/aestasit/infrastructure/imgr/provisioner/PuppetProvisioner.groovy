@@ -129,8 +129,8 @@ class PuppetProvisioner extends BaseProvisioner {
       readResourceTemplate(
         '/repos/puppet.repo', 
         [ 
-          basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/',
-          basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6/products/$basearch/'
+          basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6x/products/$basearch/',
+          basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6x/dependencies/$basearch/'
         ]
       )
     )
