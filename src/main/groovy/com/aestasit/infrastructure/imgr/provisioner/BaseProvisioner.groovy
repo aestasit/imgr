@@ -48,8 +48,9 @@ abstract class BaseProvisioner extends BaseComponent implements Provisioner {
   void provision() {
     session = new SshSession(
       box.host, 
-      provisionerConfig.user, 
-      box.keyPath
+      box.port,
+      provisionerConfig.user ?: 'root',
+      box.keyPath      
     )
     doProvision()
   }

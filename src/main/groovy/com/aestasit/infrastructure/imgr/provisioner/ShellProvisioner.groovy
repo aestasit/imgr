@@ -61,7 +61,8 @@ class ShellProvisioner extends BaseProvisioner {
     session.exec("chmod +x $DEFAULT_UPLOAD_DIR/$script; $DEFAULT_UPLOAD_DIR/$script ${provisionerConfig.arguments ?: ''}" )
   }
 
-  private File createFile(List lines) {
+  private File createFile(String content) {
+    def lines = content.readLines()
     lines.add(0, '#!/bin/bash')
     lines.add(1, '')
     String tmp = System.getProperty('java.io.tmpdir')

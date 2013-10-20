@@ -23,6 +23,7 @@ import groovy.json.JsonSlurper
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Test
 
 import com.aestasit.infrastructure.aws.EC2Client
 import com.aestasit.infrastructure.imgr.builder.AmiBuilder
@@ -98,19 +99,18 @@ class ImgrIntegrationTest extends BaseIntegrationTest {
 
   @After
   public void shutDown() {
-
     ec2.listInstances("packer*").each {
-      //ec2.terminateInstances([it.instanceId])
+      ec2.terminateInstances([it.instanceId])
     }
   }
 
-  @Ignore
+  @Test
   void testConfig() {
     new Imgr().processConfiguration(getConfig(config))
     assertEquals(1, ec2.listInstances("packer-quick-start").size())
   }
 
-  @Ignore
+  @Test
   void checkImageIsNotCreated() {
     def json = new JsonSlurper().parseText(config)
     json.put('skip_image', 'true')
@@ -118,7 +118,7 @@ class ImgrIntegrationTest extends BaseIntegrationTest {
     assertEquals(1, ec2.listInstances("packer-quick-start").size())
   }
 
-  @Ignore
+  @Test
   void testCheckHasProvisioners() {
 
     def invocationCount = 0

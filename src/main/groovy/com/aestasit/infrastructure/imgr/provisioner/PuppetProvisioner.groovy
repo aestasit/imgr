@@ -50,7 +50,7 @@ class PuppetProvisioner extends BaseProvisioner {
    * Update package repository settings.
    * 
    */
-  private void updateRepos() {    
+  private void updateRepos() {
     if (isYumAvailable()) {
       log.info '> Updating repository configurations...'
       if (isRedHatLinux() || isOracleLinux()) {
@@ -74,7 +74,7 @@ class PuppetProvisioner extends BaseProvisioner {
    */
   private void installPuppet() {
     if (!isPuppetInstalled()) {
-      
+
       log.info '> Installing Puppet...'
 
       if (isRedHatLinux() || isAmazonLinux() || isCentOS()) {
@@ -97,7 +97,7 @@ class PuppetProvisioner extends BaseProvisioner {
 
       // Create empty hiera.yaml file to avoid warning upon puppet apply.
       session.exec("touch /etc/puppet/hiera.yaml")
-      
+
     }
   }
 
@@ -115,41 +115,52 @@ class PuppetProvisioner extends BaseProvisioner {
     log.info '> Uploading new Puppet manifest'
     session.scp provisionerConfig.manifest_file, provisionerConfig.staging_directory
 
+    // Calculate facts.
     def environmentSetup = ''
     if (provisionerConfig.facts) {
-      provisionerConfig.facts.each { key, value ->
-        environmentSetup += "FACTER_${key.toUpperCase()}=${value} "        
+      if (provisionerConfig.facts instanceof Map) {
+        provisionerConfig.facts.each { key, value ->
+          environmentSetup += "FACTER_${key.toUpperCase()}=${value} "
+        }
       }
     }
-    
+
+    // Calculate module path.
+    def moduleSetup = ''
+    if (provisionerConfig.module_paths) {
+      if (provisionerConfig.module_paths instanceof Collection) {
+        moduleSetup = '--modulepath=' + provisionerConfig.module_paths.join(':')
+      }
+    }
+
     // Apply default manifest.
     log.info '> Applying Puppet configuration'
-    session.exec "${environmentSetup}${provisionerConfig.command_prefix ?: ''} /usr/bin/puppet apply -v ${provisionerConfig.staging_directory}/${manifestFile}"
+    session.exec "${environmentSetup}${provisionerConfig.command_prefix ?: ''} /usr/bin/puppet apply -v ${moduleSetup} ${provisionerConfig.staging_directory}/${manifestFile}"
 
   }
 
   private puppetRepo() {
     session.setText(
-      '/etc/yum.repos.d/puppet.repo',
-      readResourceTemplate(
-        '/repos/puppet.repo',
-        [
-          basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6x/products/$basearch/',
-          basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6x/dependencies/$basearch/'
-        ]
-      )
+    '/etc/yum.repos.d/puppet.repo',
+    readResourceTemplate(
+    '/repos/puppet.repo',
+    [
+      basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6x/products/$basearch/',
+      basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6x/dependencies/$basearch/'
+    ]
+    )
     )
   }
 
   private epelRepo() {
     session.setText(
-      '/etc/yum.repos.d/epel.repo',
-      readResourceTemplate(
-        '/repos/epel.repo',
-        [
-          baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
-        ]
-      )
+    '/etc/yum.repos.d/epel.repo',
+    readResourceTemplate(
+    '/repos/epel.repo',
+    [
+      baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
+    ]
+    )
     )
   }
 }

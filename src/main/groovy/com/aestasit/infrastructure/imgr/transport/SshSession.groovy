@@ -35,12 +35,13 @@ class SshSession {
 
   SshDslEngine engine
 
-  SshSession(String host, String user, String keyPath) {
+  SshSession(String host, int port = 22, String user = 'root', String keyPath) {
     def options = new SshOptions()
     options.with {
       logger            = new SysOutLogger()
       defaultHost       = host
       defaultUser       = user
+      defaultPort       = port
       defaultKeyFile    = new File(keyPath)
       reuseConnection   = false
       trustUnknownHosts = true

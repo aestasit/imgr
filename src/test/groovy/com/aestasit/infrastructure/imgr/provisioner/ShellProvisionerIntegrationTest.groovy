@@ -16,51 +16,51 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
+import static org.junit.Assert.*
 import groovy.json.JsonSlurper
 
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.*
 
-import com.aestasit.infrastructure.imgr.model.Box
+import com.aestasit.infrastructure.imgr.model.*
 import com.aestasit.ssh.mocks.MockSshServer
 
 /**
- * Test puppet provisioner.
+ * Test shell provisioner. 
  * 
  * @author Aestas/IT
  *
  */
-class PuppetProvisionerTest extends BaseTest {
+class ShellProvisionerTest extends BaseTest {
 
   String configText = """
     {
       "provisioners": [
          {
-           "type": "puppet-masterless",
-           "module_paths": [
-             "/etc/puppet/modules",
-             "/etc/puppet/custom_modules"
-           ],
-           "facts": {
-             "fact1": "value1",  
-             "fact2": "value2",
-           },
-           "manifest_file": "${currentDir}/src/test/resources/test.pp",
-           "staging_directory": "/etc/puppet/manifests"
+           "type":"shell",
+           "script":"src/test/resources/test.sh"
+         },
+         {
+           "type":"shell",
+           "inline":"uname -a"
          }
        ]
     }
   """
 
   @Test
-  void testPuppet() {
-    new PuppetProvisioner(testBox, getProvisionerConfig(0)).provision()
+  void testScript() {
+    new ShellProvisioner(testBox, getProvisionerConfig(0)).provision()
+  }
+
+  @Test
+  void testInline() {
+    new ShellProvisioner(testBox, getProvisionerConfig(1)).provision()
   }
 
   def getProvisionerConfig(int index = 0) {
     new JsonSlurper().parseText(configText).provisioners[index]
   }
-
+  
   @BeforeClass
   def static void mockSshCommands() {
     MockSshServer.with {
@@ -76,7 +76,6 @@ class PuppetProvisionerTest extends BaseTest {
       dir('.')
       dir('/tmp')
       dir('/etc/puppet')
-      dir('/etc/puppet/manifests')
     }
   }
 
