@@ -15,10 +15,11 @@
  */
 
 package com.aestasit.infrastructure.imgr.provisioner
+import groovy.text.SimpleTemplateEngine
+import groovy.text.Template
 import groovy.util.logging.Slf4j
 
 import com.aestasit.infrastructure.imgr.model.Box
-import com.aestasit.infrastructure.imgr.transport.SshSession
 
 /**
  * File provisioner allows copying local files to remote instances. 
@@ -35,7 +36,25 @@ class FileProvisioner extends BaseProvisioner {
 
   @Override
   public void doProvision() {
-    session.scp(new File(provisionerConfig.source_path), provisionerConfig.target_path)
+    def sourceFile = new File(provisionerConfig.source_path).canonicalFile.absoluteFile
+    if (sourceFile.exists()) {
+      if (provisionerConfig.parameters) {
+        if (sourceFile.isFile()) {
+          if (provisionerConfig.parameters instanceof Map) {
+            def replacementFile = File.createTempFile(sourceFile.name, ".tmp")
+            SimpleTemplateEngine engine = new SimpleTemplateEngine()
+            Template template = engine.createTemplate(sourceFile.text)
+            replacementFile.text = template.make(parameters)
+          } else {
+          log.warn "Template parameters are not defined as a map!"
+          }
+        } else {
+          log.warn "Source path is a directory! Can't apply template parameters to it!"
+        }
+      }
+      session.scp(sourceFile, provisionerConfig.target_path)
+    } else {
+      log.warn "Source file or directory (${sourceFile.absolutePath}) does not exist!"
+    }
   }
-  
 }

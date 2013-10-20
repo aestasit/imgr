@@ -60,16 +60,24 @@ abstract class BaseProvisioner extends BaseComponent implements Provisioner {
     check("${provisionerConfig.command_prefix ?: ''} test -f $file")
   }
 
-  def boolean isRedHat() {
+  boolean isRedHatLinux() {
     check('cat /etc/*-release | grep Red | grep Hat')
   }
 
-  def boolean isAmazonLinux() {
+  boolean isOracleLinux() {
+    check('cat /etc/issue* | grep Oracle')
+  }
+  
+  boolean isAmazonLinux() {
     check('cat /etc/*-release | grep Amazon')
   }
 
-  def boolean isCentOS() {
+  boolean isCentOS() {
     check('cat /etc/*-release | grep CentOS')
+  }
+  
+  boolean isRedHatFamily() {
+    isRedHatLinux() || isOracleLinux() || isAmazonLinux() || isCentOS()
   }
 
   def boolean isDebian() {

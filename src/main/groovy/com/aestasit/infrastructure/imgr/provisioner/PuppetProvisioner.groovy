@@ -50,10 +50,10 @@ class PuppetProvisioner extends BaseProvisioner {
    * Update package repository settings.
    * 
    */
-  private void updateRepos() {
-    log.info '> Updating repository configurations...'
+  private void updateRepos() {    
     if (isYumAvailable()) {
-      if (isRedHat()) {
+      log.info '> Updating repository configurations...'
+      if (isRedHatLinux() || isOracleLinux()) {
         puppetRepo()
         epelRepo()
       } else if (isAmazonLinux()) {
@@ -77,7 +77,7 @@ class PuppetProvisioner extends BaseProvisioner {
       
       log.info '> Installing Puppet...'
 
-      if (isRedHat() || isAmazonLinux() || isCentOS()) {
+      if (isRedHatLinux() || isAmazonLinux() || isCentOS()) {
         log.debug '> Installing Puppet for RedHat-like OS'
         installPackages(YUM, [
           'libselinux',

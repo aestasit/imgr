@@ -25,7 +25,7 @@ sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
 
 dependencies {
-  compile 'com.aestasit.infrastructure.aws:gramazon:0.3.2-SNAPSHOT'
+  compile 'com.aestasit.infrastructure.aws:gramazon:0.3.3-SNAPSHOT'
   compile 'com.aestasit.infrastructure.sshoogr:sshoogr:0.9.2-SNAPSHOT'
   compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
   compile "org.slf4j:slf4j-api:${slf4jVersion}"
