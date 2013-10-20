@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr
+package com.aestasit.infrastructure.imgr.provisioner
 
-import static org.junit.Assert.*
-
-import org.junit.Test
-
-class ImgrExceptionTest {
-
-  @Test
-  public void testException() {
-    new ImgrException("test message")
-  }
+class PuppetProvisionerTest {
 
 }

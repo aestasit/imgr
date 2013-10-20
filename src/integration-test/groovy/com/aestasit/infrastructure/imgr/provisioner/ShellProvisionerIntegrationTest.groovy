@@ -16,17 +16,22 @@
 
 package com.aestasit.infrastructure.imgr.provisioner
 
-import com.aestasit.infrastructure.imgr.BaseTest;
-import com.aestasit.infrastructure.imgr.model.Box
-import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
+import static org.junit.Assert.*
 import groovy.json.JsonSlurper
-import org.junit.Ignore
+
+import org.junit.*
+
+import com.aestasit.infrastructure.imgr.BaseIntegrationTest
+import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
+import com.aestasit.infrastructure.imgr.model.*
 
 /**
+ * 
+ * 
  * @author Aestas/IT
  *
  */
-class PuppetProvisionerTest extends BaseTest {
+class ShellProvisionerIntegrationTest extends BaseIntegrationTest {
 
   def config = """{
   "builders": [{
@@ -42,29 +47,22 @@ class PuppetProvisionerTest extends BaseTest {
   }],
 
   "provisioners": [{
-    "type": "puppet-masterless",
-    "hiera_config_path": "/Users/luciano/some.hra",
-    "module_paths": [
-      "/Users/luciano/some/module1",
-      "/Users/luciano/some/module2"
-    ],
-    "manifest_file": "/Users/luciano/Downloads/site.pp",
-    "staging_directory" : "/home/ec2-user"
-
+    "type": "shell",
+    "inline": ["uname -a > uname.txt","touch test.txt"],
+    "script":"/Users/luciano/Downloads/test.sh"
   }]
   }
   """
 
-  @Ignore
+  @Test
   void testConfig() {
-    def testBox = new Box(host: 'ec2-176-34-93-116.eu-west-1.compute.amazonaws.com',
-        user: 'ec2-user',
-        port: 21,
-        keyPath: "${KEY_LOCATION}")
 
-    def config = new JsonSlurper().parseText(config)
-    new PuppetProvisioner(testBox, config.provisioners[0]).provision()
-    // TODO write asserts!
+    def testBox = new Box(host:'ec2-54-216-53-12.eu-west-1.compute.amazonaws.com',
+        user:'ec2-user',
+        port:21,
+        keyPath:"${KEY_LOCATION}")
+    ShellProvisioner sp = new ShellProvisioner(testBox, new JsonSlurper().parseText(config).provisioners[0])
+    sp.provision()
+
   }
-
 }

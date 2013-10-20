@@ -20,7 +20,7 @@ import static org.junit.Assert.*
 import groovy.time.TimeCategory
 import org.junit.*
 
-class BaseTest {
+class BaseIntegrationTest {
 
   protected static String AWS_ACCESS_KEY_ID = ''
   protected static String AWS_SECRET_KEY = ''

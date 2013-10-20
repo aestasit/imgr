@@ -1,6 +1,7 @@
 
 dependencies {
   testCompile 'junit:junit:4.11'
+  testCompile 'com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3-SNAPSHOT'
   testRuntime 'ch.qos.logback:logback-classic:1.0.7'
 }
 

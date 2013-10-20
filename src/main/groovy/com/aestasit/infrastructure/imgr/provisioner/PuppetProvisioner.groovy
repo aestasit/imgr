@@ -115,9 +115,16 @@ class PuppetProvisioner extends BaseProvisioner {
     log.info '> Uploading new Puppet manifest'
     session.scp provisionerConfig.manifest_file, provisionerConfig.staging_directory
 
+    def environmentSetup = ''
+    if (provisionerConfig.facts) {
+      provisionerConfig.facts.each { key, value ->
+        environmentSetup += "FACTER_${key.toUpperCase()}=${value} "        
+      }
+    }
+    
     // Apply default manifest.
     log.info '> Applying Puppet configuration'
-    session.exec "${provisionerConfig.command_prefix ?: ''} /usr/bin/puppet apply -v ${provisionerConfig.staging_directory}/${manifestFile}"
+    session.exec "${environmentSetup}${provisionerConfig.command_prefix ?: ''} /usr/bin/puppet apply -v ${provisionerConfig.staging_directory}/${manifestFile}"
 
   }
 

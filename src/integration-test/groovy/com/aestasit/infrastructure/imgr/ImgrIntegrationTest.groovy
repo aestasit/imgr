@@ -34,7 +34,7 @@ import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
  * @author Aestas/IT
  *
  */
-class ImgrTest extends BaseTest {
+class ImgrIntegrationTest extends BaseIntegrationTest {
 
   def config = """{
   "builders": [{
