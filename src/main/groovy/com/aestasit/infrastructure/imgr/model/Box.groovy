@@ -20,6 +20,7 @@ import groovy.transform.Canonical
 
 @Canonical
 class Box {
+  String id
   String host
   int port
   String keyPath

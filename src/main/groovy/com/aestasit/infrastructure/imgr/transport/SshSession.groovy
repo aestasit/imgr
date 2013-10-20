@@ -16,11 +16,13 @@
 
 package com.aestasit.infrastructure.imgr.transport
 
+import groovy.util.logging.Slf4j
+
 import com.aestasit.infrastructure.imgr.ImgrException
 import com.aestasit.ssh.SshOptions
+import com.aestasit.ssh.dsl.SessionDelegate
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.SysOutLogger
-import groovy.util.logging.Slf4j
 
 /**
  *
@@ -31,15 +33,15 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class SshSession {
 
-  def engine
+  SshDslEngine engine
 
-  SshSession(String host, String user, String pathToKey) {
+  SshSession(String host, String user, String keyPath) {
     def options = new SshOptions()
     options.with {
       logger            = new SysOutLogger()
       defaultHost       = host
       defaultUser       = user
-      defaultKeyFile    = new File(pathToKey)
+      defaultKeyFile    = new File(keyPath)
       reuseConnection   = false
       trustUnknownHosts = true
       verbose           = true
@@ -73,7 +75,6 @@ class SshSession {
     res
   }
 
-
   def exec(Map commandMap) {
     def res
     engine.remoteSession {
@@ -85,33 +86,15 @@ class SshSession {
   def exec(String command) {
     def res
     engine.remoteSession {
-      try {
-        res = exec command
-      } catch (com.aestasit.ssh.SshException se) {
-        log.info "Previous command [$command] failed, let's try with sudo"
-        res = exec "sudo $command"
-      }
+      res = exec command
     }
     res
   }
 
-  def uploadTxtAsRoot(String remoteFileLocation, String fileContent) {
-    def res
-    // TODO: Remove this
+  def setText(String remoteFilePath, String content) {
     engine.remoteSession {
-      prefix("sudo") {
-        res = exec "echo '$fileContent' | sudo tee $remoteFileLocation"
-      }
+      remoteFile(remoteFilePath).text = content
     }
-    res
-  }
-
-  def remoteFile(String _remoteFile, String content) {
-    def res
-    engine.remoteSession {
-      res = remoteFile(_remoteFile).text = content
-    }
-    res
   }
 
 }

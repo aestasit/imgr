@@ -34,15 +34,11 @@ class ShellProvisioner extends BaseProvisioner {
     super(box, provisionerConfig)
   }
 
-  ShellProvisioner(SshSession session, Map provisionerConfig) {
-    super(session, provisionerConfig)
-  }
-
   static String DEFAULT_UPLOAD_DIR = '/tmp'
   static String DEFAULT_SCRIPT_NAME = 'script.sh'
 
   @Override
-  void provision() {
+  void doProvision() {
     provisionerConfig.each { key, value ->
       switch (key) {
         case 'inline':

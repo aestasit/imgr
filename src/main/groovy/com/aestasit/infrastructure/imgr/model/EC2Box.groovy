@@ -16,10 +16,9 @@
 
 package com.aestasit.infrastructure.imgr.model
 
+import groovy.transform.Canonical
 
-class Ec2Box extends Box {
-  String instanceId
-  String getId() {
-    instanceId
-  }
+@Canonical
+class EC2Box extends Box{
+  String keyPairName
 }

@@ -34,22 +34,27 @@ import com.aestasit.infrastructure.imgr.transport.SshSession
  *
  */
 @Slf4j
-abstract class BaseProvisioner extends BaseComponent {
-
-  protected SshSession session
+abstract class BaseProvisioner extends BaseComponent implements Provisioner {
+  
   protected Map provisionerConfig
-
-  BaseProvisioner(SshSession session, Map provisionerConfig) {
-    this.session = session
-    this.provisionerConfig = provisionerConfig
-  }
+  protected Box box
+  protected SshSession session
 
   BaseProvisioner(Box box, Map provisionerConfig) {
-    this.session = new SshSession(box.host, provisionerConfig.user, box.keyPath)
+    this.box = box 
     this.provisionerConfig = provisionerConfig
   }
 
-  abstract void provision()
+  void provision() {
+    session = new SshSession(
+      box.host, 
+      provisionerConfig.user, 
+      box.keyPath
+    )
+    doProvision()
+  }
+  
+  abstract void doProvision()
 
   def boolean fileExists(String file) {
     check("${provisionerConfig.command_prefix ?: ''} test -f $file")

@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.imgr.provisioner
+package com.aestasit.infrastructure.imgr.builder
 
-/**
- * Puppet Librarian based provisioner.
- *
- * @author Aestas/IT
- *
- */
-class LibrarianProvisioner extends BaseProvisioner {
+import com.aestasit.infrastructure.imgr.model.Box;
 
-  @Override
-  public void provision() {
-    // TODO implement
-  }
+public interface Builder {
 
+  /**
+   * Create initial empty box.
+   *
+   * @return box instance.
+   */
+  Box initiate()
+  
+  /**
+   * Create image from the box.
+   *
+   * @return image identifier.
+   */
+  String createImage()
+  
+  /**
+   * Clean-up after image creation.
+   */
+  void cleanup()
+
+  
 }

@@ -20,9 +20,11 @@ import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 import com.aestasit.infrastructure.imgr.builder.AmiBuilder
+import com.aestasit.infrastructure.imgr.builder.Builder
 import com.aestasit.infrastructure.imgr.builder.UnsupportedBuilder
 import com.aestasit.infrastructure.imgr.model.Box
 import com.aestasit.infrastructure.imgr.provisioner.FileProvisioner
+import com.aestasit.infrastructure.imgr.provisioner.Provisioner
 import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
 import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
 import com.aestasit.infrastructure.imgr.provisioner.UnsupportedProvisioner
@@ -42,7 +44,7 @@ class Imgr {
 
   void processConfiguration(String fileName) {
     def file = new File(fileName)
-    log.debug "> opening $fileName"
+    log.debug "> Opening $fileName"
     if (file.exists() && file.isFile()) {
       file.withReader { reader ->
         processConfiguration(reader)
@@ -57,24 +59,22 @@ class Imgr {
 
     def skipImage = config.skip_image == 'true'
 
-    def builder = getBuilder(config)
-    def shinyBox = builder.startInstance()
-    log.info("machine is started with id ${shinyBox.id}")
+    Builder builder = getBuilder(config)
+    def box = builder.initiate()
+    log.info("> Box with id ${box.id} is initiated.")
 
     if (hasProvisioners(config)) {
-      config.provisioners.eachWithIndex {p, id ->
-        def provisioner = getProvisioner(id, config, shinyBox)
+      config.provisioners.eachWithIndex { p, id ->
+        Provisioner provisioner = getProvisioner(id, config, box)
         provisioner.provision()
       }
     }
-    log.info("provisioning completed")
+    log.info("> Provisioning completed!")
 
     if (!skipImage) {
-      log.info("creating image now...")
-      builder.createImage(shinyBox, 'name', 'description')
+      builder.createImage()
     }
-    
-    // TODO: Terminate instance
+    builder.cleanup()
     
   }
 
@@ -84,14 +84,25 @@ class Imgr {
 
   void validate(config) {
     // TODO implement validation
-    println '> validation not implemented'
-    println "Number of builders: ${config.builders.size}"
-    println "Number of provisioners: ${config.provisioners?.size}"
+    log.info '> Validation not implemented'
+    log.info "Number of builders: ${config.builders.size}"
+    log.info "Number of provisioners: ${config.provisioners?.size}"
     config.builders.each {
-      println "Type of builder: ${it.type}"
+      this.log.info "Type of builder: ${it.type}"
     }
     config.provisioners.each {
-      println "Type of provisioner: ${it.type}"
+      this.log.info  "Type of provisioner: ${it.type}"
+    }
+  }
+
+  def getBuilder(builderConfig) {
+    def builder
+    switch (builderConfig.builders[0].type) {
+      case 'amazon-ebs':
+        builder = new AmiBuilder(builderConfig.builders[0])
+        break
+      default:
+        builder = new UnsupportedBuilder()
     }
   }
 
@@ -109,17 +120,6 @@ class Imgr {
         break
       default:
         provisioner = new UnsupportedProvisioner()
-    }
-  }
-
-  def getBuilder(builderConfig) {
-    def builder
-    switch (builderConfig.builders[0].type) {
-      case 'amazon-ebs':
-        builder = new AmiBuilder(builderConfig.builders[0])
-        break
-      default:
-        builder = new UnsupportedBuilder()
     }
   }
 

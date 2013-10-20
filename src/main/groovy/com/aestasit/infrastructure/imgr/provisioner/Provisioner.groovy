@@ -15,27 +15,9 @@
  */
 
 package com.aestasit.infrastructure.imgr.provisioner
-import groovy.util.logging.Slf4j
 
-import com.aestasit.infrastructure.imgr.model.Box
-import com.aestasit.infrastructure.imgr.transport.SshSession
+public interface Provisioner {
 
-/**
- * File provisioner allows copying local files to remote instances. 
- *
- * @author Aestas/IT
- *
- */
-@Slf4j
-class FileProvisioner extends BaseProvisioner {
-
-  FileProvisioner(Box box, Map provisionerConfig) {
-    super(box, provisionerConfig)
-  }
-
-  @Override
-  public void doProvision() {
-    session.scp(new File(provisionerConfig.source_path), provisionerConfig.target_path)
-  }
+  void provision()
   
 }

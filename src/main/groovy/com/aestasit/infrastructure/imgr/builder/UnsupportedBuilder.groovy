@@ -16,11 +16,21 @@
 
 package com.aestasit.infrastructure.imgr.builder
 
+import com.aestasit.infrastructure.imgr.model.Box
+
 /**
  * @author Aestas/IT
  *
  */
 class UnsupportedBuilder extends BaseBuilder {
-  
+
+  @Override
+  Box initiate() { null }
+
+  @Override
+  String createImage() { null }
+
+  @Override
+  void cleanup() { }
   
 }

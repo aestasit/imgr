@@ -28,22 +28,11 @@ import com.aestasit.infrastructure.imgr.transport.SshSession
  *
  */
 @Slf4j
-class UnsupportedProvisioner extends BaseProvisioner {
-
-  UnsupportedProvisioner() {
-    super((SshSession) null, [:])
-  }
-
-  UnsupportedProvisioner(Box box, Map provisionerConfig) {
-    super(box, provisionerConfig)
-  }
-
-  UnsupportedProvisioner(SshSession session, Map provisionerConfig) {
-    super(session, provisionerConfig)
-  }
+class UnsupportedProvisioner implements Provisioner {
 
   @Override
   public void provision() {
     log.error "Unsupported provisioner type!"
   }
+  
 }

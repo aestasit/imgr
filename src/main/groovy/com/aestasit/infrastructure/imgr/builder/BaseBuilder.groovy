@@ -17,11 +17,15 @@
 package com.aestasit.infrastructure.imgr.builder
 
 import com.aestasit.infrastructure.imgr.BaseComponent
+import com.aestasit.infrastructure.imgr.model.Box
 
 /**
+ * Base image builder.
+ * 
  * @author Aestas/IT
  *
  */
-abstract class BaseBuilder extends BaseComponent {
+abstract class BaseBuilder extends BaseComponent implements Builder {
 
+  
 }

@@ -39,12 +39,8 @@ class PuppetProvisioner extends BaseProvisioner {
     super(box, provisionerConfig)
   }
 
-  PuppetProvisioner(SshSession session, Map provisionerConfig) {
-    super(session, provisionerConfig)
-  }
-
   @Override
-  void provision() {    
+  void doProvision() {    
     updateRepos()    
     installPuppet()    
     applyManifest()
@@ -124,7 +120,7 @@ class PuppetProvisioner extends BaseProvisioner {
   }
 
   private puppetRepo() {    
-    session.uploadTxtAsRoot(
+    session.setText(
       '/etc/yum.repos.d/puppet.repo', 
       readResourceTemplate(
         '/repos/puppet.repo', 
@@ -137,7 +133,7 @@ class PuppetProvisioner extends BaseProvisioner {
   }
   
   private epelRepo() {
-    session.uploadTxtAsRoot(
+    session.setText(
       '/etc/yum.repos.d/epel.repo', 
       readResourceTemplate(
         '/repos/epel.repo',

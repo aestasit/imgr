@@ -16,22 +16,19 @@
 
 package com.aestasit.infrastructure.imgr
 
-import com.aestasit.cloud.aws.EC2Client
-import com.aestasit.infrastructure.imgr.builder.AmiBuilder
-import com.aestasit.infrastructure.imgr.Imgr
-import com.aestasit.infrastructure.imgr.model.Ec2Box;
-import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
-import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
-
+import static org.junit.Assert.assertEquals
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
-import org.junit.Test
 
-import static org.junit.Assert.assertEquals
+import com.aestasit.infrastructure.aws.EC2Client
+import com.aestasit.infrastructure.imgr.builder.AmiBuilder
+import com.aestasit.infrastructure.imgr.model.EC2Box
+import com.aestasit.infrastructure.imgr.provisioner.PuppetProvisioner
+import com.aestasit.infrastructure.imgr.provisioner.ShellProvisioner
 
 /**
  * @author Aestas/IT
@@ -109,14 +106,12 @@ class ImgrTest extends BaseTest {
 
   @Ignore
   void testConfig() {
-
     new Imgr().processConfiguration(getConfig(config))
     assertEquals(1, ec2.listInstances("packer-quick-start").size())
   }
 
   @Ignore
   void checkImageIsNotCreated() {
-
     def json = new JsonSlurper().parseText(config)
     json.put('skip_image', 'true')
     new Imgr().processConfiguration(getConfig(JsonOutput.toJson(json)))
@@ -129,20 +124,18 @@ class ImgrTest extends BaseTest {
     def invocationCount = 0
 
     AmiBuilder.metaClass.startInstance = {->
-      new Ec2Box(instanceId: '129', host: 'x', user: 'y', keyPath: '/')
+      new EC2Box(id: '129', host: 'x', user: 'y', keyPath: '/')
     }
 
-    AmiBuilder.metaClass.createImage = { Ec2Box box, String name, String description ->
+    AmiBuilder.metaClass.createImage = { EC2Box box, String name, String description ->
       // Do nothing
     }
 
     PuppetProvisioner.metaClass.provision = {
-
       invocationCount++
     }
 
     ShellProvisioner.metaClass.provision = {
-
       invocationCount++
     }
 

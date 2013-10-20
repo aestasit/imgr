@@ -18,11 +18,14 @@ package com.aestasit.infrastructure.imgr.builder
 
 import groovy.util.logging.Slf4j
 
-import com.aestasit.cloud.aws.EC2Client
+import com.aestasit.infrastructure.aws.EC2Client
+import com.aestasit.infrastructure.aws.model.KeyPair
 import com.aestasit.infrastructure.imgr.model.Box
-import com.aestasit.infrastructure.imgr.model.Ec2Box;
+import com.aestasit.infrastructure.imgr.model.EC2Box
 
 /**
+ * EC2 AMI builder.
+ * 
  * @author Aestas/IT
  *
  */
@@ -31,29 +34,32 @@ class AmiBuilder extends BaseBuilder {
 
   String accessKey
   String secretKey
-  String amiName
-  String instanceType
-  String sourceAmi
-  String amiRegion
-
-  String keyPairName // TODO this should go
-  String keyPairPath // TODO This should go
-  String securityGroup // TODO This should go
+  String region
   
-  def ec2
+  String amiName
+  String amiDescription  
+  String instanceName
+  String sourceAmi
+  String instanceType
+  
+  String securityGroup 
+  
+  private EC2Client ec2
+  private EC2Box box
 
   AmiBuilder(config) {
 
     accessKey = config.access_key
     secretKey = config.secret_key
-    amiName = config.ami_name
+    region = config.region ?: 'eu-west-1'
+    
+    amiName = config.ami_name ?: "Created with imgr at ${new Date().format('yyyy-MM-dd hh:mm')}"
+    amiDescription = config.ami_description ?: amiName
+    instanceName = config.instance_name ?: amiName 
     instanceType = config.instance_type
     sourceAmi = config.source_ami
-    amiRegion = config.region
 
-    keyPairName = config.keypair // TODO This should go
-    keyPairPath = config.keypair_location // TODO This should go
-    securityGroup = config.security_group // TODO This should go
+    securityGroup = config.security_group ?: "default"
 
     accessKey = accessKey ?: System.getenv('AWS_ACCESS_KEY_ID')
     secretKey = secretKey ?: System.getenv('AWS_SECRET_ACCESS_KEY')
@@ -66,29 +72,61 @@ class AmiBuilder extends BaseBuilder {
     System.setProperty("aws.accessKeyId", accessKey)
     System.setProperty("aws.secretKey", secretKey)
 
-    ec2 = new EC2Client(amiRegion)
+    ec2 = new EC2Client(region)
 
   }
 
-  Box startInstance() {
-    log.info 'Launching a source AWS instance...'
+  @Override
+  Box initiate() {
+
+    log.info '> Creating temporary key pair...'
+    def keyPair = ec2.createKeyPair()
+    def keyPath = saveKey(keyPair)
+        
+    log.info '> Launching a source AWS instance...'
     def instance = ec2.startInstance(
-        keyPairName,
-        sourceAmi,
-        securityGroup,
-        instanceType,
-        true, -1, amiName)
-    new Ec2Box(
-        host: instance.host,
-        port: 22,
-        keyPath: keyPairPath,
-        instanceId: instance.instanceId
-        )
+      keyPair.name,
+      sourceAmi,
+      securityGroup,
+      instanceType,
+      true, 
+      -1, 
+      instanceName
+    )
+    
+    // Return box data.
+    new EC2Box(
+      id: "${instance?.instanceId}",      
+      host: "${instance?.host}",
+      port: 22,      
+      keyPath: keyPath,
+      keyPairName: keyPair.name
+    )
+    
+  }
+  
+  @Override
+  String createImage() {
+    log.info "> Creating image..."
+    ec2.createImage(box.id, amiName, amiDescription, true, 120, 20)
   }
 
-  void createImage(Ec2Box box, name, description) {
-    // TODO better error handling
-    ec2.createImage(box.instanceId, name, description, true, 120, 20)
+  @Override
+  void cleanup() {
+    log.info '> Terminating instance...'
+    ec2.terminateInstance(box.id)
+    log.info '> Deleting temporary key pair...'
+    ec2.destroyKeyPair(box.keyPairName)
   }
 
+  /*
+   * PRIVATE METHODS
+   */
+    
+  private saveKey(KeyPair keyPair) {
+    File keyFile = File.createTempFile(keyPair.name, '.pem')
+    keyFile.text = keyPair.material
+    keyFile.absolutePath
+  }
+  
 }
