@@ -94,14 +94,15 @@ class AmiBuilder extends BaseBuilder {
       instanceName
     )
     
-    // Return box data.
-    new EC2Box(
+    // Save box data.
+    box = new EC2Box(
       id: "${instance?.instanceId}",      
       host: "${instance?.host}",
       port: 22,      
       keyPath: keyPath,
       keyPairName: keyPair.name
-    )
+    )    
+    box
     
   }
   
