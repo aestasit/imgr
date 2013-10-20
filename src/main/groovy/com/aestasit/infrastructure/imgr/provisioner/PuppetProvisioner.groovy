@@ -40,9 +40,9 @@ class PuppetProvisioner extends BaseProvisioner {
   }
 
   @Override
-  void doProvision() {    
-    updateRepos()    
-    installPuppet()    
+  void doProvision() {
+    updateRepos()
+    installPuppet()
     applyManifest()
   }
 
@@ -51,7 +51,7 @@ class PuppetProvisioner extends BaseProvisioner {
    * 
    */
   private void updateRepos() {
-    log.info '> Installing Puppet: updating repository on remote machine...'
+    log.info '> Updating repository configurations...'
     if (isYumAvailable()) {
       if (isRedHat()) {
         puppetRepo()
@@ -73,30 +73,32 @@ class PuppetProvisioner extends BaseProvisioner {
    * 
    */
   private void installPuppet() {
-    
-    log.info '> Installing Puppet...'
-    
-    if (isRedHat() || isAmazonLinux() || isCentOS()) {
-      log.debug '> Installing Puppet for RedHat-like OS'
-      installPackages(YUM, [
-        'libselinux',
-        'libselinux-ruby',
-        "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
-        "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
-      ])
-    } else if (isDebian()) {
-      log.debug '> Installing Puppet for Debian-like OS'
-      installPackages(APT, [
-        "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
-        "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
-      ])
-    } else {
-      throw new ImgrException('Unknown operating system. Puppet will not be installed!')
+    if (!isPuppetInstalled()) {
+      
+      log.info '> Installing Puppet...'
+
+      if (isRedHat() || isAmazonLinux() || isCentOS()) {
+        log.debug '> Installing Puppet for RedHat-like OS'
+        installPackages(YUM, [
+          'libselinux',
+          'libselinux-ruby',
+          "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
+          "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
+        ])
+      } else if (isDebian()) {
+        log.debug '> Installing Puppet for Debian-like OS'
+        installPackages(APT, [
+          "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
+          "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
+        ])
+      } else {
+        throw new ImgrException('Unknown operating system. Puppet will not be installed!')
+      }
+
+      // Create empty hiera.yaml file to avoid warning upon puppet apply.
+      session.exec("touch /etc/puppet/hiera.yaml")
+      
     }
-
-    // Create empty hiera.yaml file to avoid warning upon puppet apply.
-    session.exec("touch /etc/puppet/hiera.yaml")
-
   }
 
   /**
@@ -106,7 +108,7 @@ class PuppetProvisioner extends BaseProvisioner {
   private void applyManifest() {
 
     log.info '> Applying Puppet configuration...'
-    
+
     def manifestFile = new File(provisionerConfig.manifest_file).name
     log.debug "Manifest file is $manifestFile"
 
@@ -119,29 +121,28 @@ class PuppetProvisioner extends BaseProvisioner {
 
   }
 
-  private puppetRepo() {    
+  private puppetRepo() {
     session.setText(
-      '/etc/yum.repos.d/puppet.repo', 
+      '/etc/yum.repos.d/puppet.repo',
       readResourceTemplate(
-        '/repos/puppet.repo', 
-        [ 
+        '/repos/puppet.repo',
+        [
           basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6x/products/$basearch/',
           basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6x/dependencies/$basearch/'
         ]
       )
     )
   }
-  
+
   private epelRepo() {
     session.setText(
-      '/etc/yum.repos.d/epel.repo', 
+      '/etc/yum.repos.d/epel.repo',
       readResourceTemplate(
         '/repos/epel.repo',
-        [ 
+        [
           baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
         ]
       )
     )
   }
-
 }
