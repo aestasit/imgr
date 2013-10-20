@@ -72,7 +72,8 @@ class Imgr {
     log.info("> Provisioning completed!")
 
     if (!skipImage) {
-      builder.createImage()
+      def imageId = builder.createImage()
+      log.info("> Image with id ${imageId} is created.")
     }
     builder.cleanup()
     
