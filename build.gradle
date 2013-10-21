@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.imgr'
-version = '0.3.8-SNAPSHOT'
+version = '0.3.9-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }

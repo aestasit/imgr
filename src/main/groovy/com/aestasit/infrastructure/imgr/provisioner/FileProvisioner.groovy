@@ -37,15 +37,18 @@ class FileProvisioner extends BaseProvisioner {
   @Override
   public void doProvision() {
     def sourceFile = new File(provisionerConfig.source_path).canonicalFile.absoluteFile
+    def filesToClean = []
     if (sourceFile.exists()) {
       if (provisionerConfig.parameters) {
         if (sourceFile.isFile()) {
           if (provisionerConfig.parameters instanceof Map) {
-            def replacementFile = File.createTempFile(sourceFile.name, ".tmp")
+            def replacementFile = new File(File.createTempDir(), sourceFile.name)            
             SimpleTemplateEngine engine = new SimpleTemplateEngine()
             Template template = engine.createTemplate(sourceFile.text)
             replacementFile.text = template.make(provisionerConfig.parameters)
             sourceFile = replacementFile
+            filesToClean << replacementFile
+            filesToClean << replacementFile.parentFile
           } else {
             log.warn "Template parameters are not defined as a map!"
           }
@@ -53,9 +56,12 @@ class FileProvisioner extends BaseProvisioner {
           log.warn "Source path is a directory! Can't apply template parameters to it!"
         }
       }
-      session.scp(sourceFile.absolutePath, provisionerConfig.target_path)
+      session.scp(sourceFile.absolutePath, provisionerConfig.target_path)      
     } else {
       log.warn "Source file or directory (${sourceFile.absolutePath}) does not exist!"
+    }
+    filesToClean.each { File file ->
+      file.delete()
     }
   }
 }
