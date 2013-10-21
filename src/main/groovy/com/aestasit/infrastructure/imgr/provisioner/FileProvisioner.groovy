@@ -44,7 +44,7 @@ class FileProvisioner extends BaseProvisioner {
             def replacementFile = File.createTempFile(sourceFile.name, ".tmp")
             SimpleTemplateEngine engine = new SimpleTemplateEngine()
             Template template = engine.createTemplate(sourceFile.text)
-            replacementFile.text = template.make(parameters)
+            replacementFile.text = template.make(provisionerConfig.parameters)
           } else {
           log.warn "Template parameters are not defined as a map!"
           }
@@ -52,7 +52,7 @@ class FileProvisioner extends BaseProvisioner {
           log.warn "Source path is a directory! Can't apply template parameters to it!"
         }
       }
-      session.scp(sourceFile, provisionerConfig.target_path)
+      session.scp(sourceFile.absolutePath, provisionerConfig.target_path)
     } else {
       log.warn "Source file or directory (${sourceFile.absolutePath}) does not exist!"
     }
