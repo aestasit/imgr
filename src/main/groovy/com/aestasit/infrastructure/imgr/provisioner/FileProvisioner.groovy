@@ -45,8 +45,9 @@ class FileProvisioner extends BaseProvisioner {
             SimpleTemplateEngine engine = new SimpleTemplateEngine()
             Template template = engine.createTemplate(sourceFile.text)
             replacementFile.text = template.make(provisionerConfig.parameters)
+            sourceFile = replacementFile
           } else {
-          log.warn "Template parameters are not defined as a map!"
+            log.warn "Template parameters are not defined as a map!"
           }
         } else {
           log.warn "Source path is a directory! Can't apply template parameters to it!"
