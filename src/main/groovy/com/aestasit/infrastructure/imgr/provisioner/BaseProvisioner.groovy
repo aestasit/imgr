@@ -150,7 +150,7 @@ abstract class BaseProvisioner extends BaseComponent implements Provisioner {
         log.info("Package is already installed: $name")
       } else {
         log.info("Installing: $name")
-        session.exec("${provisionerConfig.command_prefix ?: ''} apt-get -y install $name")
+        session.exec("${provisionerConfig.command_prefix ?: ''} apt-get --force-yes -y install $name")
       }
     } else {
       throw new ImgrException("apt-get is not available on this system!")

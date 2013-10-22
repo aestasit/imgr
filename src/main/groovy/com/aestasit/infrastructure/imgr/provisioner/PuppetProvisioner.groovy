@@ -92,12 +92,13 @@ class PuppetProvisioner extends BaseProvisioner {
         log.debug '> Installing Puppet for Debian-like OS'
         installPackages(APT, additionalAptPackages + [
           "facter${provisionerConfig.facter_version ? '=' + provisionerConfig.facter_version : ''}",
+          "puppet-common${provisionerConfig.puppet_version ? '=' + provisionerConfig.puppet_version : ''}",
           "puppet${provisionerConfig.puppet_version ? '=' + provisionerConfig.puppet_version : ''}",
         ])
       } else {
         throw new ImgrException('Unknown operating system. Puppet will not be installed!')
       }
-
+      
       // Create empty hiera.yaml file to avoid warning upon puppet apply.
       session.exec("touch /etc/puppet/hiera.yaml")
 
