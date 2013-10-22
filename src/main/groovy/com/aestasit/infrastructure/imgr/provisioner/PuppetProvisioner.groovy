@@ -51,20 +51,25 @@ class PuppetProvisioner extends BaseProvisioner {
    * 
    */
   private void updateRepos() {
-    if (isYumAvailable()) {
-      log.info '> Updating repository configurations...'
+    if (isYumAvailable()) {      
       if (isRedHatLinux() || isOracleLinux()) {
-        puppetRepo()
-        epelRepo()
+        epelYumRepo()
+        puppetYumRepo()        
       } else if (isAmazonLinux()) {
-        puppetRepo()
+        puppetYumRepo()
       } else if (isCentOS()) {
-        puppetRepo()
+        puppetYumRepo()
       } else {
-        log.info('Unknown operating system. Assuming Yum is already setup!')
+        log.warn '> Unknown operating system. Assuming Yum is already setup!'
+      }
+    } else if (isAptAvailable()) {
+      if (isDebian()) {
+        puppetAptRepo()
+      } else {
+        log.warn '> Unknown operating system. Assuming Apt is already setup!'
       }
     } else {
-      throw new ImgrException('This operating system does not support Yum!')
+      throw new ImgrException('This operating system does not support Yum/Apt!')
     }
   }
 
@@ -77,17 +82,15 @@ class PuppetProvisioner extends BaseProvisioner {
 
       log.info '> Installing Puppet...'
 
-      if (isRedHatLinux() || isAmazonLinux() || isCentOS()) {
+      if (isRedHatLinux() || isAmazonLinux() || isCentOS() || isOracleLinux()) {
         log.debug '> Installing Puppet for RedHat-like OS'
-        installPackages(YUM, [
-          'libselinux',
-          'libselinux-ruby',
+        installPackages(YUM, additionalYumPackages + [
           "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
           "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
         ])
       } else if (isDebian()) {
         log.debug '> Installing Puppet for Debian-like OS'
-        installPackages(APT, [
+        installPackages(APT, additionalAptPackages + [
           "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
           "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
         ])
@@ -99,6 +102,26 @@ class PuppetProvisioner extends BaseProvisioner {
       session.exec("touch /etc/puppet/hiera.yaml")
 
     }
+  }
+  
+  private getAdditionalYumPackages() {
+    def packages = [ 'libselinux', 'libselinux-ruby' ] 
+    if (provisionerConfig.containsKey('yum_packages')) {
+      if (provisionerConfig.'yum_packages' instanceof Collection) {
+        packages = provisionerConfig.'yum_packages'.collect { it.toString() }
+      }
+    }
+    packages    
+  }
+  
+  private getAdditionalAptPackages() {
+    def packages = [ ]
+    if (provisionerConfig.containsKey('apt_packages')) {
+      if (provisionerConfig.'apt_packages' instanceof Collection) {
+        packages = provisionerConfig.'apt_packages'.collect { it.toString() }
+      }
+    }
+    packages
   }
 
   /**
@@ -139,28 +162,55 @@ class PuppetProvisioner extends BaseProvisioner {
 
   }
 
-  private puppetRepo() {
-    session.setText(
-    '/etc/yum.repos.d/puppet.repo',
-    readResourceTemplate(
-    '/repos/puppet.repo',
-    [
-      basePuppetRepoUrl: provisionerConfig.base_puppet_repo_url ?: 'http://yum.puppetlabs.com/el/6x/products/$basearch/',
-      basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_repo_url ?: 'http://yum.puppetlabs.com/el/6x/dependencies/$basearch/'
-    ]
-    )
-    )
+  private void puppetYumRepo() {
+    if (!fileExists('/etc/yum.repos.d/puppet.repo')) {
+      log.info '> Adding Puppet Labs repositories...'
+      session.setText(
+        '/etc/yum.repos.d/puppet.repo',
+        readResourceTemplate(
+          '/repos/puppet.yum.repo',
+          [
+            basePuppetRepoUrl: provisionerConfig.base_puppet_yum_repo_url ?: 'http://yum.puppetlabs.com/el/6x/products/$basearch/',
+            basePuppetDepsRepoUrl: provisionerConfig.base_puppet_deps_yum_repo_url ?: 'http://yum.puppetlabs.com/el/6x/dependencies/$basearch/'
+          ]
+        )
+      )
+    }
   }
 
-  private epelRepo() {
-    session.setText(
-    '/etc/yum.repos.d/epel.repo',
-    readResourceTemplate(
-    '/repos/epel.repo',
-    [
-      baseEpelRepoUrl: provisionerConfig.base_epel_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
-    ]
-    )
-    )
+  private void puppetAptRepo() {
+    if (!fileExists('/etc/apt/sources.list.d/puppet.list')) {
+      log.info '> Adding Puppet Labs repositories...'
+      session.setText(
+        '/etc/apt/sources.list.d/puppet.list',
+        readResourceTemplate(
+          '/repos/puppet.apt.repo',
+          [
+            basePuppetRepoUrl: provisionerConfig.base_puppet_apt_repo_url ?: 'http://apt.puppetlabs.com',
+          ]
+        )
+      )      
+    }
+    if (!fileExists('/etc/apt/trusted.gpg.d/puppetlabs-keyring.gpg')) {
+      session.setText(
+        '/etc/apt/trusted.gpg.d/puppetlabs-keyring.gpg',
+        readResourceFile("/keys/puppetlabs-keyring.gpg")
+      )
+    }
+  }
+    
+  private epelYumRepo() {
+    if (!fileExists('/etc/yum.repos.d/epel.repo')) {
+      log.info '> Adding EPEL repositories...'
+      session.setText(
+        '/etc/yum.repos.d/epel.yum.repo',
+        readResourceTemplate(
+          '/repos/epel.repo',
+          [
+            baseEpelRepoUrl: provisionerConfig.base_epel_yum_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
+          ]
+        )
+      )
+    }
   }
 }

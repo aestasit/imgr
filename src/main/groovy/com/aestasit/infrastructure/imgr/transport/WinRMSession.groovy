@@ -25,7 +25,7 @@ import groovy.util.logging.Slf4j
  *
  */
 @Slf4j
-class RdpSession {
+class WinRMSession {
 
 
 }

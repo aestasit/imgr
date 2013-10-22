@@ -1,5 +1,5 @@
 [epel]
 name=Extra Packages for Enterprise Linux 6
 baseurl=${baseEpelRepoUrl}
-enabled=1
+enabled=0
 gpgcheck=0

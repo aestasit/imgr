@@ -130,7 +130,8 @@ abstract class BaseProvisioner extends BaseComponent implements Provisioner {
   }
 
   def installYumPackage(String name) {
-    def cmd = "${provisionerConfig.command_prefix ?: ''} yum --assumeyes install $name"
+    def enableEpel = fileExists('/etc/yum.repos.d/epel.repo') ? "--enablerepo=epel" : ""
+    def cmd = "${provisionerConfig.command_prefix ?: ''} yum --assumeyes ${enableEpel} install $name"
     if (isYumAvailable()) {
       if (isYumPackageInstalled(name)) {
         log.info("Package is already installed: $name")
