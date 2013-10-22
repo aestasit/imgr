@@ -1,7 +1,7 @@
 # Puppetlabs products
-deb http://apt.puppetlabs.com precise main
-deb-src http://apt.puppetlabs.com precise main
+deb ${basePuppetRepoUrl} precise main
+deb-src ${basePuppetRepoUrl} precise main
 
 # Puppetlabs dependencies
-deb http://apt.puppetlabs.com precise dependencies
-deb-src http://apt.puppetlabs.com precise dependencies
+deb ${basePuppetRepoUrl} precise dependencies
+deb-src ${basePuppetRepoUrl} precise dependencies
