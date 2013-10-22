@@ -179,10 +179,10 @@ class PuppetProvisioner extends BaseProvisioner {
   }
 
   private void puppetAptRepo() {
-    if (!fileExists('/etc/apt/sources.list.d/puppet.list')) {
+    if (!fileExists('/etc/apt/sources.list.d/puppetlabs.list')) {
       log.info '> Adding Puppet Labs repositories...'
       session.setText(
-        '/etc/apt/sources.list.d/puppet.list',
+        '/etc/apt/sources.list.d/puppetlabs.list',
         readResourceTemplate(
           '/repos/puppet.apt.repo',
           [
