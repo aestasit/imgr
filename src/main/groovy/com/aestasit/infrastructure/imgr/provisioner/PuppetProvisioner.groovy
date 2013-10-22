@@ -91,8 +91,8 @@ class PuppetProvisioner extends BaseProvisioner {
       } else if (isDebian()) {
         log.debug '> Installing Puppet for Debian-like OS'
         installPackages(APT, additionalAptPackages + [
-          "facter${provisionerConfig.facter_version ? '-' + provisionerConfig.facter_version : ''}",
-          "puppet${provisionerConfig.puppet_version ? '-' + provisionerConfig.puppet_version : ''}",
+          "facter${provisionerConfig.facter_version ? '=' + provisionerConfig.facter_version : ''}",
+          "puppet${provisionerConfig.puppet_version ? '=' + provisionerConfig.puppet_version : ''}",
         ])
       } else {
         throw new ImgrException('Unknown operating system. Puppet will not be installed!')
