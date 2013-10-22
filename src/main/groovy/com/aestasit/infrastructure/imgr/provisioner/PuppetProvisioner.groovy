@@ -190,14 +190,15 @@ class PuppetProvisioner extends BaseProvisioner {
             basePuppetRepoUrl: provisionerConfig.base_puppet_apt_repo_url ?: 'http://apt.puppetlabs.com',
           ]
         )
-      )      
-    }
-    if (!fileExists('/etc/apt/trusted.gpg.d/puppetlabs-keyring.gpg')) {
-      session.setText(
-        '/etc/apt/trusted.gpg.d/puppetlabs-keyring.gpg',
-        readResourceFile("/keys/puppetlabs-keyring.gpg")
       )
-    }
+      if (!fileExists('/etc/apt/trusted.gpg.d/puppetlabs-keyring.gpg')) {
+        session.setText(
+          '/etc/apt/trusted.gpg.d/puppetlabs-keyring.gpg',
+          readResourceFile("/keys/puppetlabs-keyring.gpg")
+        )
+      }
+      session.exec("${provisionerConfig.command_prefix ?: ''} apt-get update")
+    }    
   }
     
   private epelYumRepo() {
