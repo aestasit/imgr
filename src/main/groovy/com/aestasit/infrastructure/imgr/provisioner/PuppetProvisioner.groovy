@@ -207,7 +207,7 @@ class PuppetProvisioner extends BaseProvisioner {
       session.setText(
         '/etc/yum.repos.d/epel.yum.repo',
         readResourceTemplate(
-          '/repos/epel.repo',
+          '/repos/epel.yum.repo',
           [
             baseEpelRepoUrl: provisionerConfig.base_epel_yum_repo_url ?: 'http://dl.fedoraproject.org/pub/epel/6/$basearch/'
           ]
