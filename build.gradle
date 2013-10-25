@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.imgr'
-version = '0.3.16-SNAPSHOT'
+version = '0.3.17-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }
@@ -32,6 +32,7 @@ dependencies {
   compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
   compile "ch.qos.logback:logback-classic:${logbackVersion}"
   compile 'org.fusesource.jansi:jansi:1.11'
+  compile 'com.jcraft:jsch:0.1.50'
 }
 
 task wrapper(type: Wrapper) {
