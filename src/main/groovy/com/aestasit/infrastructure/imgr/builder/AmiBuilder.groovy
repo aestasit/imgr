@@ -90,6 +90,7 @@ class AmiBuilder extends BaseBuilder {
       securityGroup,
       instanceType,
       true, 
+      22,
       -1, 
       instanceName
     )
