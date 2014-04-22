@@ -146,5 +146,3 @@ Here is an example of a shell provisioner:
     }
 
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aestasit/imgr/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
