@@ -43,7 +43,7 @@ class FileProvisionerTest extends BaseTest {
             "media_host":"127.0.0.1" 
           },
           "target_path":"/etc/puppet"
-        },
+        }
       ]
     }
   """
